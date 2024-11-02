@@ -6,6 +6,11 @@ import TaskSubmitPage from './user_pages/Task_detail'
 import Opera_hist from './user_pages/Opera_hist'
 import Youre_site from './user_pages/Youre_site'
 import ViewStatisticsPage from './user_pages/View_statics'
+import Dashboard from './user_pages/Dashboard'
+import Writhdrow from './user_pages/Writhdrow'
+import Deposite from './user_pages/Add_fund'
+import Trans_hist from './user_pages/Trans_hist'
+import Profile from './user_pages/Profile'
 
 function App() {
   return (
@@ -13,15 +18,19 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Publisher */}
-          <Route path='/' element={<Alltask />} />
-          <Route path='/operation_history' element={<Opera_hist  />} />
-           
+          <Route path='/' element={<Dashboard />} />
+          <Route path='/all-tasks' element={<Alltask />} />
+          <Route path='/all-tasks/:id' element={<TaskSubmitPage />} />
+          <Route path='/my-work' element={<Opera_hist  />} />
+          <Route path='/withdraw' element={<Writhdrow  />} />
+          <Route path='/transaction-history' element={<Trans_hist  />} />
+          <Route path='/profile' element={<Profile  />} />
           {/* advertiser */}
-          <Route path='/creat_task' element={<CreateTask />} />
-          <Route path='/creat_task/:id' element={<TaskSubmitPage />} />
+          <Route path='/create-campaign' element={<CreateTask />} />
+          <Route path='/my-campaign' element={<Youre_site/>} />
+          <Route path='/my-campaign/:Statistics' element={<ViewStatisticsPage/>} />
           <Route path='/my_task' element={<My_task  />} />
-          <Route path='/youre_site' element={<Youre_site/>} />
-          <Route path='/Statistics' element={<ViewStatisticsPage/>} />
+          <Route path='/add-fund' element={<Deposite  />} />
         </Routes>
       </BrowserRouter>
     </div>
