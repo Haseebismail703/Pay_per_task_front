@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Table, Button, Modal, Tag, Select } from 'antd';
+import Admin_navb from '../Admin_comp/Admin_navb';
 
 const { Option } = Select;
 
@@ -114,6 +115,9 @@ const PendingTasks: React.FC = () => {
         : tasksData;
 
     return (
+        <>
+        <Admin_navb/>
+       
         <div style={{ padding: 20 }}>
             <Select
                 style={{ width: 200, marginBottom: 20 }}
@@ -150,7 +154,7 @@ const PendingTasks: React.FC = () => {
                     </div>
                 )}
             </Modal>
-        </div>
+        </div> </>
     );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Table, Button, Modal, Input, DatePicker, Row, Col } from 'antd';
+import Admin_navb from '../Admin_comp/Admin_navb';
 
 interface PaymentRecord {
   key: string;
@@ -55,6 +56,9 @@ const PaymentRequestPage: React.FC = () => {
   );
 
   return (
+    <>
+    <Admin_navb/>
+    
     <div style={{ padding: '20px' }}>
       <h2>Withdrawals</h2>
       <Row gutter={16} style={{ marginBottom: 16 }}>
@@ -142,7 +146,7 @@ const PaymentRequestPage: React.FC = () => {
       >
         <Input placeholder="Enter Deposit Amount" value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
       </Modal>
-    </div>
+    </div></>
   );
 };
 

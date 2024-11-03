@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Table, Button, Modal, Input } from 'antd';
+import Admin_navb from '../Admin_comp/Admin_navb';
 
 interface Task {
     key: string;
@@ -101,6 +102,9 @@ const PendingTasks: React.FC = () => {
     ];
 
     return (
+        <>
+        <Admin_navb/>
+            
         <div style={{ padding: 20 }}>
             <Table
                 columns={columns}
@@ -140,7 +144,7 @@ const PendingTasks: React.FC = () => {
                     </div>
                 )}
             </Modal>
-        </div>
+        </div></>
     );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Table, Button, Modal, Tag, Input, Select } from 'antd';
+import Admin_navb from '../Admin_comp/Admin_navb';
 
 interface User {
     id: string;
@@ -93,6 +94,9 @@ const UserTable: React.FC = () => {
     ];
 
     return (
+        <>
+        
+        <Admin_navb/>
         <div style={{ padding: 20 }}>
             <Input
                 placeholder="Search by name or ID"
@@ -134,7 +138,7 @@ const UserTable: React.FC = () => {
                     </div>
                 )}
             </Modal>
-        </div>
+        </div></>
     );
 };
 

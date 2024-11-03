@@ -17,6 +17,7 @@ import Appr_rej_task from './Admin_pages/Task_appr_rej'
 import All_user from './Admin_pages/All_user'
 import Task_report from './Admin_pages/Task_report'
 import PaymentRequestPage from './Admin_pages/Payment_req'
+import Payment_history from './Admin_pages/Payment_hist'
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path='/admin/All_users' element={<All_user/>} />
           <Route path='/admin/task_report' element={<Task_report/>} />
           <Route path='/admin/payment_request' element={<PaymentRequestPage/>} />
+          <Route path='/admin/payment_history' element={<Payment_history/>} />
         </Routes>
       </BrowserRouter>
     </div>
