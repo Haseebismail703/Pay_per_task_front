@@ -108,4 +108,4 @@ const Task_report : React.FC = () => {
     );
 };
 
-export default Task_report ;
+export default Task_report;

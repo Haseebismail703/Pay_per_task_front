@@ -18,6 +18,8 @@ import All_user from './Admin_pages/All_user'
 import Task_report from './Admin_pages/Task_report'
 import PaymentRequestPage from './Admin_pages/Payment_req'
 import Payment_history from './Admin_pages/Payment_hist'
+import Admin_profile from './Admin_pages/Admin_profile'
+import Admin_login from './Admin_pages/Admin_login'
 
 function App() {
   return (
@@ -47,6 +49,9 @@ function App() {
           <Route path='/admin/task_report' element={<Task_report/>} />
           <Route path='/admin/payment_request' element={<PaymentRequestPage/>} />
           <Route path='/admin/payment_history' element={<Payment_history/>} />
+          <Route path='/admin/profile' element={<Admin_profile/>} />
+          <Route path='/admin/login' element={<Admin_login/>} />
+
         </Routes>
       </BrowserRouter>
     </div>

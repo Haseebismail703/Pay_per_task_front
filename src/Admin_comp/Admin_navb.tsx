@@ -42,7 +42,7 @@ const Admin_navb: React.FC = () => {
     const profileMenuItems = [
         {
             key: 'profile',
-            label: 'Profile Settings',
+            label: <Link to={"/admin/profile"} >Profile Settings</Link>,
             icon: <SettingOutlined />,
         },
         {
