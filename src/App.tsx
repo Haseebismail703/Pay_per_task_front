@@ -20,6 +20,7 @@ import PaymentRequestPage from './Admin_pages/Payment_req'
 import Payment_history from './Admin_pages/Payment_hist'
 import Admin_profile from './Admin_pages/Admin_profile'
 import Admin_login from './Admin_pages/Admin_login'
+import LoginPage from './user_pages/Login'
 
 function App() {
   return (
@@ -34,6 +35,8 @@ function App() {
           <Route path='/withdraw' element={<Writhdrow />} />
           <Route path='/transaction-history' element={<Trans_hist />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/login' element={<LoginPage/>} />
+
           {/* advertiser */}
           <Route path='/create-campaign' element={<CreateTask />} />
           <Route path='/my-campaign' element={<Youre_site />} />
@@ -51,6 +54,7 @@ function App() {
           <Route path='/admin/payment_history' element={<Payment_history/>} />
           <Route path='/admin/profile' element={<Admin_profile/>} />
           <Route path='/admin/login' element={<Admin_login/>} />
+          
 
         </Routes>
       </BrowserRouter>
