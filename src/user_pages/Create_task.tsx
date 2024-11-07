@@ -7,10 +7,10 @@ const { Option } = Select;
 
 const CreateTask: React.FC = () => {
     const [form] = Form.useForm();
-    const [budget, setBudget] = useState<number>(0);
-    const [workerCount, setWorkerCount] = useState<number>(1);
-    const [estimatedCost, setEstimatedCost] = useState<number>(0);
     const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+    const [publisherReward, setPublisherReward] = useState<number>(0);
+    const [workersNeeded, setWorkersNeeded] = useState<number>(0);
+    const [totalPriceWithoutFee, setTotalPriceWithoutFee] = useState<number>(0);
 
     const countries = [
         { value: 'usa', label: 'United States' },
@@ -26,40 +26,41 @@ const CreateTask: React.FC = () => {
         { value: 'writing', label: 'Writing', subcategories: ['Blog Writing', 'Technical Writing', 'Copywriting'] },
     ];
 
-    const minimumPrices: { [key: string]: number } = {
-        development: 100,
-        design: 50,
-        marketing: 75,
-        writing: 40,
-    };
-
-    const handleBudgetChange = (value: number) => {
-        setBudget(value);
-        calculateEstimatedCost(value, workerCount);
-    };
-
-    const handleWorkerChange = (value: number) => {
-        setWorkerCount(value);
-        calculateEstimatedCost(budget, value);
-    };
-
-    const calculateEstimatedCost = (budget: number, workers: number) => {
-        const cost = budget * workers;
-        setEstimatedCost(cost);
-    };
-
     const handleCategoryChange = (value: string) => {
         setSelectedCategory(value);
-        const minPrice = minimumPrices[value] || 0;
-        setBudget(minPrice);
-        calculateEstimatedCost(minPrice, workerCount);
+    };
+
+    const handlePublisherRewardChange = (value: string) => {
+        const reward = parseFloat(value);
+        setPublisherReward(reward);
+        calculateTotalPrice(reward, workersNeeded);
+    };
+
+    const handleWorkersNeededChange = (value: string) => {
+        const newWorkersNeeded = parseInt(value);
+        setWorkersNeeded(newWorkersNeeded);
+        calculateTotalPrice(publisherReward, newWorkersNeeded);
+    };
+
+    const calculateTotalPrice = (reward: number, workersNeeded: number) => {
+        const totalWithoutFee = reward * workersNeeded; // Calculate total price without fee
+        setTotalPriceWithoutFee(totalWithoutFee);
     };
 
     const handleSubmit = (values: any) => {
+        if (values.publisherReward < 0.1) {
+            notification.error({
+                message: 'Invalid Publisher Reward',
+                description: 'The publisher reward must be at least $0.10!',
+            });
+            return; // Prevent form submission if publisher reward is too low
+        }
+
         notification.success({
-            message: 'Task Created',
-            description: 'Your task has been created successfully!',
+            message: 'Task Created Successfully',
+            description: 'Your task has been created!',
         });
+
         console.log('Form Values:', values);
         form.resetFields();
     };
@@ -69,57 +70,41 @@ const CreateTask: React.FC = () => {
             <Navbar />
             <div style={{ padding: '20px' }}>
                 <center>
-                   <Title level={3}>Create a New Task</Title> 
+                    <Title level={3}>Create a New Task</Title>
                 </center>
-                
+
                 <Form
                     form={form}
                     layout="vertical"
                     onFinish={handleSubmit}
                     style={{ maxWidth: '600px', margin: 'auto' }}
                 >
+                    {/* Task Title */}
                     <Form.Item
-                        label="Job Title"
-                        name="jobTitle"
-                        rules={[{ required: true, message: 'Please enter the job title!' }]}
+                        label="Task Title"
+                        name="taskTitle"
+                        rules={[{ required: true, message: 'Please enter the task title!' }]}
                     >
-                        <Input placeholder="Enter the job title" />
+                        <Input placeholder="Enter task title" />
                     </Form.Item>
 
+                    {/* Task Description */}
                     <Form.Item
-                        label="Job Description"
-                        name="jobDescription"
-                        rules={[{ required: true, message: 'Please enter the job description!' }]}
+                        label="Task Description"
+                        name="taskDescription"
+                        rules={[{ required: true, message: 'Please enter the task description!' }]}
                     >
-                        <Input.TextArea rows={4} placeholder="Describe the job..." />
+                        <Input.TextArea rows={4} placeholder="Describe the task" />
                     </Form.Item>
 
+                    {/* Category Selection */}
                     <Form.Item
-                        label="Select Country"
-                        name="countries"
-                        rules={[{ required: true, message: 'Please select at least one country!' }]}
-                    >
-                        <Select
-                            mode="multiple"
-                            placeholder="Select countries"
-                            style={{ width: '100%' }}
-                            dropdownStyle={{ backgroundColor: '#f0f0f0' }}
-                        >
-                            {countries.map(country => (
-                                <Option key={country.value} value={country.value}>
-                                    {country.label}
-                                </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Select Category"
+                        label="Category"
                         name="category"
                         rules={[{ required: true, message: 'Please select a category!' }]}
                     >
                         <Select
-                            placeholder="Select a category"
+                            placeholder="Select category"
                             onChange={handleCategoryChange}
                             style={{ width: '100%' }}
                         >
@@ -131,9 +116,10 @@ const CreateTask: React.FC = () => {
                         </Select>
                     </Form.Item>
 
+                    {/* Subcategory Selection */}
                     {selectedCategory && (
                         <Form.Item
-                            label="Select Subcategory"
+                            label="Subcategory"
                             name="subcategory"
                             rules={[{ required: true, message: 'Please select a subcategory!' }]}
                         >
@@ -141,53 +127,93 @@ const CreateTask: React.FC = () => {
                                 placeholder="Select a subcategory"
                                 style={{ width: '100%' }}
                             >
-                                {categories.find(cat => cat.value === selectedCategory)?.subcategories.map(subcat => (
-                                    <Option key={subcat} value={subcat}>
-                                        {subcat}
-                                    </Option>
-                                ))}
+                                {categories
+                                    .find(cat => cat.value === selectedCategory)
+                                    ?.subcategories.map(subcat => (
+                                        <Option key={subcat} value={subcat}>
+                                            {subcat}
+                                        </Option>
+                                    ))}
                             </Select>
                         </Form.Item>
                     )}
 
+                    {/* Instructions */}
                     <Form.Item
-                        label="Required Proof Task Completed"
-                        name="requiredProof"
-                        rules={[{ required: true, message: 'Please provide required proof details!' }]}
+                        label="Instructions"
+                        name="instructions"
+                        rules={[{ required: true, message: 'Please provide instructions!' }]}
                     >
-                        <Input.TextArea rows={4} placeholder="Describe the required proof for task completion..." />
+                        <Input.TextArea rows={4} placeholder="Enter instructions" />
                     </Form.Item>
 
-                    <Form.Item
-                        label="Budget ($)"
-                        name="budget"
-                        rules={[{ required: true, message: 'Please enter the budget!' }]}
-                    >
-                        <Input
-                            type="number"
-                            value={budget}
-                            min={minimumPrices[selectedCategory || ''] || 0}
-                            onChange={e => handleBudgetChange(Number(e.target.value))}
-                        />
-                    </Form.Item>
-
+                    {/* Workers Needed */}
                     <Form.Item
                         label="Workers Needed"
                         name="workersNeeded"
-                        rules={[{ required: true, message: 'Please enter the number of workers needed!' }]}
+                        rules={[
+                            { required: true, message: 'Please enter the number of workers needed!' },
+                            { validator: (_, value) => {
+                                if (parseInt(value) < 1) {
+                                    return Promise.reject('At least one worker is needed');
+                                }
+                                return Promise.resolve();
+                            }}
+                        ]}
                     >
                         <Input
                             type="number"
-                            value={workerCount}
-                            onChange={e => handleWorkerChange(Number(e.target.value))}
-                            placeholder="Enter number of workers needed"
+                            onChange={e => handleWorkersNeededChange(e.target.value)}
+                            placeholder="Enter the number of workers"
                         />
                     </Form.Item>
 
-                    <Form.Item label="Estimated Job Cost ($)">
-                        <Input value={estimatedCost} disabled />
+                    {/* Publisher Reward */}
+                    <Form.Item
+                        label="Publisher Reward ($)"
+                        name="publisherReward"
+                        rules={[
+                            { required: true, message: 'Please enter the publisher reward!' },
+                            { validator: (_, value) => {
+                                if (parseFloat(value) < 0.1) {
+                                    return Promise.reject('Publisher reward must be at least $0.10');
+                                }
+                                return Promise.resolve();
+                            }}
+                        ]}
+                    >
+                        <Input
+                            type="number"
+                            onChange={e => handlePublisherRewardChange(e.target.value)}
+                            placeholder="Enter reward"
+                        />
                     </Form.Item>
 
+                    {/* Target Countries */}
+                    <Form.Item
+                        label="Target Countries"
+                        name="targetCountries"
+                        rules={[{ required: true, message: 'Please select target countries!' }]}
+                    >
+                        <Select
+                            mode="multiple"
+                            placeholder="Select countries"
+                            style={{ width: '100%' }}
+                        >
+                            {countries.map(country => (
+                                <Option key={country.value} value={country.value}>
+                                    {country.label}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+
+                    {/* Total Price Without Fee */}
+                    <Form.Item label="Total Price Without Fee ($)">
+                        <Input value={totalPriceWithoutFee.toFixed(2)} disabled />
+                    </Form.Item>
+
+                    {/* Submit Button */}
                     <Form.Item>
                         <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
                             Create Task
