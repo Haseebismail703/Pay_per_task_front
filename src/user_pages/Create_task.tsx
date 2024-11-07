@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Select, Row, Col, Typography, notification } from 'antd';
+import { Form, Input, Button, Select, Typography, notification } from 'antd';
 import Navbar from '../usercomp/user_nav';
 
 const { Title } = Typography;
@@ -17,7 +17,6 @@ const CreateTask: React.FC = () => {
         { value: 'canada', label: 'Canada' },
         { value: 'uk', label: 'United Kingdom' },
         { value: 'australia', label: 'Australia' },
-        // Add more countries as needed
     ];
 
     const categories = [
@@ -25,8 +24,14 @@ const CreateTask: React.FC = () => {
         { value: 'design', label: 'Design', subcategories: ['Graphic Design', 'UI/UX Design', 'Product Design'] },
         { value: 'marketing', label: 'Marketing', subcategories: ['SEO', 'Content Marketing', 'Social Media'] },
         { value: 'writing', label: 'Writing', subcategories: ['Blog Writing', 'Technical Writing', 'Copywriting'] },
-        // Add more categories and subcategories as needed
     ];
+
+    const minimumPrices: { [key: string]: number } = {
+        development: 100,
+        design: 50,
+        marketing: 75,
+        writing: 40,
+    };
 
     const handleBudgetChange = (value: number) => {
         setBudget(value);
@@ -45,6 +50,9 @@ const CreateTask: React.FC = () => {
 
     const handleCategoryChange = (value: string) => {
         setSelectedCategory(value);
+        const minPrice = minimumPrices[value] || 0;
+        setBudget(minPrice);
+        calculateEstimatedCost(minPrice, workerCount);
     };
 
     const handleSubmit = (values: any) => {
@@ -70,7 +78,6 @@ const CreateTask: React.FC = () => {
                     onFinish={handleSubmit}
                     style={{ maxWidth: '600px', margin: 'auto' }}
                 >
-                    {/* Job Title */}
                     <Form.Item
                         label="Job Title"
                         name="jobTitle"
@@ -79,7 +86,6 @@ const CreateTask: React.FC = () => {
                         <Input placeholder="Enter the job title" />
                     </Form.Item>
 
-                    {/* Job Description */}
                     <Form.Item
                         label="Job Description"
                         name="jobDescription"
@@ -88,7 +94,6 @@ const CreateTask: React.FC = () => {
                         <Input.TextArea rows={4} placeholder="Describe the job..." />
                     </Form.Item>
 
-                    {/* Select Countries (Multiple) */}
                     <Form.Item
                         label="Select Country"
                         name="countries"
@@ -108,7 +113,6 @@ const CreateTask: React.FC = () => {
                         </Select>
                     </Form.Item>
 
-                    {/* Select Category */}
                     <Form.Item
                         label="Select Category"
                         name="category"
@@ -127,7 +131,6 @@ const CreateTask: React.FC = () => {
                         </Select>
                     </Form.Item>
 
-                    {/* Subcategory Selection */}
                     {selectedCategory && (
                         <Form.Item
                             label="Select Subcategory"
@@ -147,7 +150,6 @@ const CreateTask: React.FC = () => {
                         </Form.Item>
                     )}
 
-                    {/* Required Proof */}
                     <Form.Item
                         label="Required Proof Task Completed"
                         name="requiredProof"
@@ -156,16 +158,19 @@ const CreateTask: React.FC = () => {
                         <Input.TextArea rows={4} placeholder="Describe the required proof for task completion..." />
                     </Form.Item>
 
-                    {/* Budget */}
                     <Form.Item
                         label="Budget ($)"
                         name="budget"
                         rules={[{ required: true, message: 'Please enter the budget!' }]}
                     >
-                        <Input type="number" onChange={e => handleBudgetChange(Number(e.target.value))} />
+                        <Input
+                            type="number"
+                            value={budget}
+                            min={minimumPrices[selectedCategory || ''] || 0}
+                            onChange={e => handleBudgetChange(Number(e.target.value))}
+                        />
                     </Form.Item>
 
-                    {/* Workers Needed */}
                     <Form.Item
                         label="Workers Needed"
                         name="workersNeeded"
@@ -179,12 +184,10 @@ const CreateTask: React.FC = () => {
                         />
                     </Form.Item>
 
-                    {/* Estimated Job Cost */}
                     <Form.Item label="Estimated Job Cost ($)">
                         <Input value={estimatedCost} disabled />
                     </Form.Item>
 
-                    {/* Submit Button */}
                     <Form.Item>
                         <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
                             Create Task
