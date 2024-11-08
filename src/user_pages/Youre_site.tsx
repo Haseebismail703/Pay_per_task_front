@@ -1,110 +1,118 @@
-import React, { useState } from 'react';
-import { Table, Button, Tag, Typography, Row, Col } from 'antd';
-import { ColumnsType } from 'antd/es/table';
-
-const { Title } = Typography;
+import React, { useEffect, useState } from 'react';
+import { Table, Button, notification, Tag } from 'antd';
+import axios from 'axios';
+import api from '../api/api.js';
 
 interface Task {
-    key: string;
-    title: string;
-    payout: number;
-    total: number;
-    completed: number;
-    remaining: number;
-    status: 'Paused' | 'Active';
+    id: number;
+    taskTitle: string;
+    category: string;
+    subcategory: string;
+    workersNeeded: number;
+    publisherReward: number;
+    status: 'Enabled' | 'Paused';
 }
 
-const initialTasks: Task[] = [
-    { key: '1', title: 'Install App', payout: 50, total: 20, completed: 18, remaining: 2, status: 'Active' },
-    { key: '2', title: 'Survey Task', payout: 75, total: 10, completed: 10, remaining: 0, status: 'Paused' },
-    { key: '3', title: 'Social Media Share', payout: 40, total: 15, completed: 10, remaining: 5, status: 'Active' },
-];
+const TaskTable: React.FC = () => {
+    const [tasks, setTasks] = useState<Task[]>([])
 
-const Youre_site: React.FC = () => {
-    const [tasks, setTasks] = useState<Task[]>(initialTasks);
+    // Fetch tasks data from API
+    useEffect(() => {
+        const fetchTasks = async () => {
+            let adid: String = '1234'
+            try {
+                const response = await axios.get<Task[]>(`${api}/getTaskbyId/${adid}`); // Replace with your API endpoint
+                setTasks(response.data);
+                console.log(response.data)
+            } catch (error) {
+                notification.error({
+                    message: 'Error',
+                    description: 'Failed to fetch tasks.',
+                });
+            }
+        };
 
-    const handleToggleStatus = (key: string) => {
-        setTasks((prevTasks) =>
-            prevTasks.map((task) =>
-                task.key === key ? { ...task, status: task.status === 'Active' ? 'Paused' : 'Active' } : task
-            )
-        );
+        fetchTasks();
+    }, []);
+
+    const handleStatusToggle = async (taskId: string, currentStatus: 'Enabled' | 'Paused') => {
+        try {
+            const updatedStatus = currentStatus === 'Enabled' ? 'Paused' : 'Enabled';
+            await axios.put(`${api}/statusUpdate/${taskId}`, { status: updatedStatus }); // Update task status in backend
+
+            // Update task status locally
+            setTasks(prevTasks =>
+                prevTasks.map(task =>
+                    task.id === taskId ? { ...task, status: updatedStatus } : task
+                )
+            );
+
+            notification.success({
+                message: `Task ${updatedStatus}`,
+                description: `The task has been ${updatedStatus.toLowerCase()} successfully.`,
+            });
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: 'Failed to update task status.',
+            });
+        }
     };
 
-
-
-
-    const columns: ColumnsType<Task> = [
+    const columns = [
         {
             title: 'Task Title',
-            dataIndex: 'title',
-            key: 'title',
+            dataIndex: 'taskTitle',
+            key: 'taskTitle',
         },
         {
-            title: 'Payout',
-            dataIndex: 'payout',
-            key: 'payout',
-            render: (payout) => `$${payout}`,
+            title: 'Category',
+            dataIndex: 'category',
+            key: 'category',
         },
         {
-            title: 'Total Tasks',
-            dataIndex: 'total',
-            key: 'total',
+            title: 'Subcategory',
+            dataIndex: 'subcategory',
+            key: 'subcategory',
         },
         {
-            title: 'Completed',
-            dataIndex: 'completed',
-            key: 'completed',
+            title: 'Workers Needed',
+            dataIndex: 'workersNeeded',
+            key: 'workersNeeded',
         },
         {
-            title: 'Remaining',
-            dataIndex: 'remaining',
-            key: 'remaining',
+            title: 'Publisher Reward ($)',
+            dataIndex: 'publisherReward',
+            key: 'publisherReward',
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render: (status) => (
-                <Tag color={status === 'Active' ? 'green' : 'volcano'}>
-                    {status === 'Active' ? 'Active' : 'Paused'}
-                </Tag>
+            render: (status: string) => (
+                <Tag color={status === 'Enabled' ? 'green' : 'red'}>{status}</Tag>
             ),
         },
         {
             title: 'Actions',
             key: 'actions',
-            render: (_, task) => (
-                <Row gutter={8}>
-                    <Col>
-                        <Button type="link">
-                            View Statics
-                        </Button>
-                    </Col>
-                    <Col>
-                        <Button type="primary" onClick={() => handleToggleStatus(task.key)}>
-                            {task.status === 'Active' ? 'Pause' : 'Resume'}
-                        </Button>
-                    </Col>
-                </Row>
+            render: (_: any, record: Task) => (
+                <Button
+                    type={record.status === 'Enabled' ? 'default' : 'primary'}
+                    onClick={() => handleStatusToggle(record.id, record.status)}
+                >
+                    {record.status === 'Enabled' ? 'Pause' : 'Enable'}
+                </Button>
             ),
         },
     ];
 
     return (
         <div style={{ padding: '20px' }}>
-            <Title level={3}>All Tasks</Title>
-            <Table
-                columns={columns}
-                dataSource={tasks}
-                pagination={{ pageSize: 5 }}
-                scroll={{ x: 800 }}
-                rowKey="key"
-                bordered
-            />
-
+            <h2>All Tasks</h2>
+            <Table dataSource={tasks} columns={columns} rowKey="id" />
         </div>
     );
 };
 
-export default Youre_site;
+export default TaskTable;
