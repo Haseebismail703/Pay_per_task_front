@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Table, Typography, Row, Col } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import Navbar from '../usercomp/user_nav';
 
 const { Title } = Typography;
 
@@ -78,28 +79,30 @@ const TransactionHistory: React.FC = () => {
     ];
 
     return (
-        <Row justify="center" align="middle" style={{ padding: '20px', backgroundColor: '#f0f2f5' }}>
-            <Col xs={24} sm={24} md={24} lg={24}>
-                <Card
-                    title={<Title level={3}>Transaction History</Title>}
-                    bordered={false}
-                    style={{
-                        borderRadius: '8px',
-                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
-                        backgroundColor: '#fff',
-                    }}
-                >
-                    <Table
-                        columns={columns}
-                        dataSource={transactions}
-                        pagination={false}
-                        scroll={{ x: true }} // Enable horizontal scrolling if needed
-                        style={{ width: '100%' }} // Ensure the table takes full width
+        <>
+            <Navbar />
+            <Row justify="center" align="middle" style={{ padding: '20px', backgroundColor: '#f0f2f5' }}>
+                <Col xs={24} sm={24} md={24} lg={24}>
+                    <Card
+                        title={<Title level={3}>Transaction History</Title>}
+                        bordered={false}
+                        style={{
+                            borderRadius: '8px',
+                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                            backgroundColor: '#fff',
+                        }}
+                    >
+                        <Table
+                            columns={columns}
+                            dataSource={transactions}
+                            pagination={false}
+                            scroll={{ x: true }} // Enable horizontal scrolling if needed
+                            style={{ width: '100%' }} // Ensure the table takes full width
 
-                    />
-                </Card>
-            </Col>
-        </Row>
+                        />
+                    </Card>
+                </Col>
+            </Row></>
     );
 };
 

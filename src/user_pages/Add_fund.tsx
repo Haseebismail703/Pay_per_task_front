@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Typography, Steps, Button, Row, Col, Input, Radio, Image, message } from 'antd';
 import { DollarCircleOutlined, WalletOutlined } from '@ant-design/icons';
+import Navbar from '../usercomp/user_nav';
 
 const { Title, Text } = Typography;
 const { Step } = Steps;
@@ -44,6 +45,8 @@ const DepositPage: React.FC = () => {
     };
 
     return (
+        <>
+       <Navbar/>
         <Row justify="center" align="middle" style={{ minHeight: '100vh', padding: '20px', backgroundColor: '#f0f2f5' }}>
             <Col xs={24} sm={20} md={16} lg={10}>
                 <Card
@@ -167,7 +170,7 @@ const DepositPage: React.FC = () => {
                     )}
                 </Card>
             </Col>
-        </Row>
+        </Row> </>
     );
 };
 

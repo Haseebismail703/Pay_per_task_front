@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, notification, Tag } from 'antd';
 import axios from 'axios';
 import api from '../api/api.js';
+import Navbar from '../usercomp/user_nav.js';
 
 interface Task {
-    id: number;
+    _id: string; // Updated to string
     taskTitle: string;
     category: string;
     subcategory: string;
@@ -14,16 +15,16 @@ interface Task {
 }
 
 const TaskTable: React.FC = () => {
-    const [tasks, setTasks] = useState<Task[]>([])
+    const [tasks, setTasks] = useState<Task[]>([]);
 
     // Fetch tasks data from API
     useEffect(() => {
         const fetchTasks = async () => {
-            let adid: String = '1234'
+            const adid = '1234'; // Adjusted adid to a regular string
             try {
-                const response = await axios.get<Task[]>(`${api}/getTaskbyId/${adid}`); // Replace with your API endpoint
+                const response = await axios.get<Task[]>(`${api}/getTaskbyId/${adid}`);
                 setTasks(response.data);
-                console.log(response.data)
+                console.log(response.data);
             } catch (error) {
                 notification.error({
                     message: 'Error',
@@ -38,12 +39,12 @@ const TaskTable: React.FC = () => {
     const handleStatusToggle = async (taskId: string, currentStatus: 'Enabled' | 'Paused') => {
         try {
             const updatedStatus = currentStatus === 'Enabled' ? 'Paused' : 'Enabled';
-            await axios.put(`${api}/statusUpdate/${taskId}`, { status: updatedStatus }); // Update task status in backend
+            await axios.put(`${api}/statusUpdate/${taskId}`, { status: updatedStatus });
 
             // Update task status locally
             setTasks(prevTasks =>
                 prevTasks.map(task =>
-                    task.id === taskId ? { ...task, status: updatedStatus } : task
+                    task._id === taskId ? { ...task, status: updatedStatus } : task
                 )
             );
 
@@ -99,7 +100,7 @@ const TaskTable: React.FC = () => {
             render: (_: any, record: Task) => (
                 <Button
                     type={record.status === 'Enabled' ? 'default' : 'primary'}
-                    onClick={() => handleStatusToggle(record.id, record.status)}
+                    onClick={() => handleStatusToggle(record._id, record.status)}
                 >
                     {record.status === 'Enabled' ? 'Pause' : 'Enable'}
                 </Button>
@@ -108,10 +109,13 @@ const TaskTable: React.FC = () => {
     ];
 
     return (
+        <>
+        <Navbar/>
         <div style={{ padding: '20px' }}>
             <h2>All Tasks</h2>
             <Table dataSource={tasks} columns={columns} rowKey="id" />
         </div>
+        </>
     );
 };
 

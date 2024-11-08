@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Typography, Radio, Space, Button, Row, Col, Divider, Input, Image, message } from 'antd';
 import { DollarCircleOutlined } from '@ant-design/icons';
+import Navbar from '../usercomp/user_nav';
 
 const { Title, Text } = Typography;
 
@@ -39,6 +40,8 @@ const WithdrawPage: React.FC = () => {
     };
 
     return (
+        <>
+        <Navbar/>
         <Row justify="center" align="middle" style={{ minHeight: '100vh', padding: '20px', backgroundColor: '#f5f7fa' }}>
             <Col xs={24} sm={20} md={16} lg={10}>
                 <Card
@@ -133,7 +136,7 @@ const WithdrawPage: React.FC = () => {
                     </Space>
                 </Card>
             </Col>
-        </Row>
+        </Row></>
     );
 };
 

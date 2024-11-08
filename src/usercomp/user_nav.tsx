@@ -129,7 +129,7 @@ const Navbar: React.FC = () => {
                     fontSize: '20px',
                     fontWeight: 'bold',
                 }}>
-                    My App
+                    User Dashboard
                 </div>
                 <Space align="center">
                     <Badge count={notifications.length} style={{ marginTop: 29, marginRight: 6 }}>
