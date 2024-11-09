@@ -25,27 +25,27 @@ const PendingTasks: React.FC = () => {
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [rejectionReason, setRejectionReason] = useState('');
 
+    const fetchTasks = async () => {
+        try {
+            const response = await axios.get<Task[]>(`${api}/pendingTask`);
+            setTasks(response.data);
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: 'Failed to fetch tasks.',
+            });
+        }
+    };
     useEffect(() => {
-        const fetchTasks = async () => {
-            try {
-                const response = await axios.get<Task[]>(`${api}/pendingTask`);
-                setTasks(response.data);
-            } catch (error) {
-                notification.error({
-                    message: 'Error',
-                    description: 'Failed to fetch tasks.',
-                });
-            }
-        };
         fetchTasks();
     }, []);
 
     const handleApproveTask = async (taskId: string) => {
         try {
-            await axios.put(`${taskId}/pendingTask`);
-            setTasks(prevTasks => prevTasks.map(task =>
-                task._id === taskId ? { ...task, status: 'Active' } : task
-            ));
+            await axios.put(`${api}/approve_task/${taskId}`, {
+                status: "Approve"
+            });
+            fetchTasks();
             notification.success({
                 message: 'Task Approved',
                 description: 'The task has been approved successfully.',
@@ -61,15 +61,13 @@ const PendingTasks: React.FC = () => {
     const handleRejectTask = async () => {
         if (selectedTask) {
             try {
-                await axios.put(`/api/rejectTask/${selectedTask._id}`, { reason: rejectionReason });
-                setTasks(prevTasks => prevTasks.map(task =>
-                    task._id === selectedTask._id ? { ...task, status: 'Rejected' } : task
-                ));
+                await axios.put(`${api}/reject_task/${selectedTask._id}`, { reject_reason: rejectionReason, status: "Reject" });
                 setIsRejectModalVisible(false);
                 notification.success({
                     message: 'Task Rejected',
                     description: 'The task has been rejected successfully.',
                 });
+                fetchTasks();
             } catch (error) {
                 notification.error({
                     message: 'Error',
@@ -133,23 +131,23 @@ const PendingTasks: React.FC = () => {
             key: 'action',
             render: (_: any, task: Task) => (
                 <span>
-                    <Button 
-                        type="link" 
+                    <Button
+                        type="link"
                         onClick={() => showRejectModal(task)}
                         disabled={task.status === 'Rejected' || task.status === 'Active'} // Disable for Rejected or Active tasks
                     >
                         Reject
                     </Button>
-                    <Button 
-                        type="link" 
-                        onClick={() => handleApproveTask(task._id)} 
+                    <Button
+                        type="link"
+                        onClick={() => handleApproveTask(task._id)}
                         disabled={task.status === 'Rejected' || task.status === 'Active'} // Disable for Rejected or Active tasks
                     >
                         Approve
                     </Button>
-                    <Button 
-                        type="link" 
-                        onClick={() => showDetailModal(task)} 
+                    <Button
+                        type="link"
+                        onClick={() => showDetailModal(task)}
                     >
                         View Details
                     </Button>

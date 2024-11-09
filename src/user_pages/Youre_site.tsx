@@ -11,7 +11,8 @@ interface Task {
     subcategory: string;
     workersNeeded: number;
     publisherReward: number;
-    status: 'Enabled' | 'Paused' | 'Pending' | 'Reject' | 'Complete' | 'Running';
+    status: string;
+    active: boolean;  // changed from Boolean to boolean
 }
 
 const TaskTable: React.FC = () => {
@@ -36,21 +37,14 @@ const TaskTable: React.FC = () => {
         fetchTasks();
     }, []);
 
-    const handleStatusToggle = async (taskId: string, currentStatus: string) => {
+    const handleStatusToggle = async (taskId: string, currentStatus: boolean) => {
         try {
-            const updatedStatus = currentStatus === 'Enabled' ? 'Paused' : 'Enabled';
-            await axios.put(`${api}/statusUpdate/${taskId}`, { status: updatedStatus });
-
-            // Update task status locally
-            setTasks(prevTasks =>
-                prevTasks.map(task =>
-                    task._id === taskId ? { ...task, status: updatedStatus } : task
-                )
-            );
+            const updatedStatus = currentStatus === true ? true : false;
+            await axios.put(`${api}/statusUpdate/${taskId}`, { active: updatedStatus });
 
             notification.success({
                 message: `Task ${updatedStatus}`,
-                description: `The task has been ${updatedStatus.toLowerCase()} successfully.`,
+                description: `The task has been ${updatedStatus} successfully.`,
             });
         } catch (error) {
             notification.error({
@@ -92,12 +86,22 @@ const TaskTable: React.FC = () => {
             key: 'status',
             render: (status: string) => (
                 <Tag color={
-                    status === 'Enabled' ? 'green' : 
-                    status === 'Paused' ? 'blue' : 
-                    status === 'Pending' ? 'orange' : 
-                    status === 'Reject' ? 'red' : 'grey'
+                    status === 'Enabled' ? 'green' :
+                        status === 'Paused' ? 'blue' :
+                            status === 'Pending' ? 'orange' :
+                                status === 'Reject' ? 'red' : 'grey'
                 }>
                     {status}
+                </Tag>
+            ),
+        },
+        {
+            title: 'Active',
+            dataIndex: 'active',
+            key: 'active',
+            render: (active: boolean) => (
+                <Tag color={active ? 'green' : 'red'}>
+                    {active ? 'Active' : 'Inactive'}
                 </Tag>
             ),
         },
@@ -107,7 +111,7 @@ const TaskTable: React.FC = () => {
             render: (_: any, record: Task) => (
                 <Button
                     type={record.status === 'Enabled' ? 'default' : 'primary'}
-                    onClick={() => handleStatusToggle(record._id, record.status)}
+                    onClick={() => handleStatusToggle(record._id, record.active)}
                     disabled={record.status === 'Pending' || record.status === 'Reject'}
                 >
                     {record.status === 'Enabled' ? 'Pause' : 'Enable'}
@@ -118,11 +122,11 @@ const TaskTable: React.FC = () => {
 
     return (
         <>
-        <Navbar/>
-        <div style={{ padding: '20px' }}>
-            <h2>All Tasks</h2>
-            <Table dataSource={tasks} columns={columns} rowKey="_id" />
-        </div>
+            <Navbar />
+            <div style={{ padding: '20px' }}>
+                <h2>All Tasks</h2>
+                <Table dataSource={tasks} columns={columns} rowKey="_id" />
+            </div>
         </>
     );
 };
