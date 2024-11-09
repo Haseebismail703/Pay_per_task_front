@@ -12,7 +12,7 @@ interface Task {
     workersNeeded: number;
     publisherReward: number;
     status: string;
-    active: boolean;  // changed from Boolean to boolean
+    active: boolean;
 }
 
 const TaskTable: React.FC = () => {
@@ -37,14 +37,23 @@ const TaskTable: React.FC = () => {
         fetchTasks();
     }, []);
 
+    // Handle task status toggle (active/inactive)
     const handleStatusToggle = async (taskId: string, currentStatus: boolean) => {
         try {
-            const updatedStatus = currentStatus === true ? true : false;
+            // Toggle the active status (true -> false or false -> true)
+            const updatedStatus = !currentStatus;
             await axios.put(`${api}/statusUpdate/${taskId}`, { active: updatedStatus });
 
+            // Update task status locally
+            setTasks(prevTasks =>
+                prevTasks.map(task =>
+                    task._id === taskId ? { ...task, active: updatedStatus } : task
+                )
+            );
+
             notification.success({
-                message: `Task ${updatedStatus}`,
-                description: `The task has been ${updatedStatus} successfully.`,
+                message: `Task ${updatedStatus ? 'Enabled' : 'Paused'}`,
+                description: `The task has been ${updatedStatus ? 'enabled' : 'paused'} successfully.`,
             });
         } catch (error) {
             notification.error({
@@ -86,10 +95,12 @@ const TaskTable: React.FC = () => {
             key: 'status',
             render: (status: string) => (
                 <Tag color={
-                    status === 'Enabled' ? 'green' :
-                        status === 'Paused' ? 'blue' :
-                            status === 'Pending' ? 'orange' :
-                                status === 'Reject' ? 'red' : 'grey'
+                    status === 'Pending' ? 'orange' :
+                    status === 'Approve' ? 'purple' :
+                    status === 'Reject' ? 'red' :
+                    status === 'Running' ? 'cyan' :
+                    status === 'Complete' ? 'green-inverse' : // Custom inverse green for 'Complete'
+                    'grey' // Default color if status is not recognized
                 }>
                     {status}
                 </Tag>
@@ -110,11 +121,11 @@ const TaskTable: React.FC = () => {
             key: 'actions',
             render: (_: any, record: Task) => (
                 <Button
-                    type={record.status === 'Enabled' ? 'default' : 'primary'}
+                    type={record.active ? 'default' : 'primary'}
                     onClick={() => handleStatusToggle(record._id, record.active)}
-                    disabled={record.status === 'Pending' || record.status === 'Reject'}
+                    disabled={record.status === 'Pending' || record.status === 'Reject' || record.status === 'Complete'}
                 >
-                    {record.status === 'Enabled' ? 'Pause' : 'Enable'}
+                    {record.active ? 'Pause' : 'Enable'}
                 </Button>
             ),
         },
