@@ -1,50 +1,83 @@
-import React, { useState } from 'react';
-import { Table, Button, Modal, Input } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Table, Button, Modal, Input, notification, Tag } from 'antd';
+import axios from 'axios';
 import Admin_navb from '../Admin_comp/Admin_navb';
+import api from '../api/api';
 
 interface Task {
-    key: string;
+    _id: string;
     userName: string;
-    taskName: string;
-    payoutCategory: string;
-    details: {
-        category: string;
-        country: string;
-        description: string;
-    };
+    taskTitle: string;
+    taskDescription: string;
+    category: string;
+    workersNeeded: number;
+    publisherReward: number;
+    totalPriceWithoutFee: number;
+    advertiserId: string;
+    active: boolean;
+    status: string
 }
 
-const pendingTasksData: Task[] = [
-    {
-        key: '1',
-        userName: 'John Doe',
-        taskName: 'Complete Project A',
-        payoutCategory: '$100',
-        details: {
-            category: 'Development',
-            country: 'USA',
-            description: 'This task involves developing the backend for Project A.',
-        },
-    },
-    {
-        key: '2',
-        userName: 'Jane Smith',
-        taskName: 'Design New Feature',
-        payoutCategory: '$200',
-        details: {
-            category: 'Design',
-            country: 'UK',
-            description: 'This task involves designing a new feature for the application.',
-        },
-    },
-    // Add more tasks as needed
-];
-
 const PendingTasks: React.FC = () => {
+    const [tasks, setTasks] = useState<Task[]>([]);
     const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
     const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [rejectionReason, setRejectionReason] = useState('');
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const response = await axios.get<Task[]>(`${api}/pendingTask`);
+                setTasks(response.data);
+            } catch (error) {
+                notification.error({
+                    message: 'Error',
+                    description: 'Failed to fetch tasks.',
+                });
+            }
+        };
+        fetchTasks();
+    }, []);
+
+    const handleApproveTask = async (taskId: string) => {
+        try {
+            await axios.put(`${taskId}/pendingTask`);
+            setTasks(prevTasks => prevTasks.map(task =>
+                task._id === taskId ? { ...task, status: 'Active' } : task
+            ));
+            notification.success({
+                message: 'Task Approved',
+                description: 'The task has been approved successfully.',
+            });
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: 'Failed to approve the task.',
+            });
+        }
+    };
+
+    const handleRejectTask = async () => {
+        if (selectedTask) {
+            try {
+                await axios.put(`/api/rejectTask/${selectedTask._id}`, { reason: rejectionReason });
+                setTasks(prevTasks => prevTasks.map(task =>
+                    task._id === selectedTask._id ? { ...task, status: 'Rejected' } : task
+                ));
+                setIsRejectModalVisible(false);
+                notification.success({
+                    message: 'Task Rejected',
+                    description: 'The task has been rejected successfully.',
+                });
+            } catch (error) {
+                notification.error({
+                    message: 'Error',
+                    description: 'Failed to reject the task.',
+                });
+            }
+        }
+    };
 
     const showRejectModal = (task: Task) => {
         setSelectedTask(task);
@@ -54,13 +87,6 @@ const PendingTasks: React.FC = () => {
     const showDetailModal = (task: Task) => {
         setSelectedTask(task);
         setIsDetailModalVisible(true);
-    };
-
-    const handleRejectOk = () => {
-        console.log('Rejection Reason:', rejectionReason);
-        // Handle rejection logic here
-        setIsRejectModalVisible(false);
-        setRejectionReason('');
     };
 
     const handleRejectCancel = () => {
@@ -79,23 +105,54 @@ const PendingTasks: React.FC = () => {
             key: 'userName',
         },
         {
-            title: 'Task Name',
-            dataIndex: 'taskName',
-            key: 'taskName',
+            title: 'Task Title',
+            dataIndex: 'taskTitle',
+            key: 'taskTitle',
         },
         {
-            title: 'Payout Category',
-            dataIndex: 'payoutCategory',
-            key: 'payoutCategory',
+            title: 'Category',
+            dataIndex: 'category',
+            key: 'category',
+        },
+        {
+            title: 'Publisher Reward',
+            dataIndex: 'publisherReward',
+            key: 'publisherReward',
+        },
+        {
+            title: 'Status',
+            key: 'status',
+            render: (_: any, task: Task) => (
+                <Tag color={task.status === 'Pending' ? 'orange' : task.status === 'Active' ? 'green' : 'red'}>
+                    {task.status}
+                </Tag>
+            ),
         },
         {
             title: 'Action',
             key: 'action',
             render: (_: any, task: Task) => (
                 <span>
-                    <Button type="link" onClick={() => showRejectModal(task)}>Reject</Button>
-                    <Button type="link">Approve</Button>
-                    <Button type="link" onClick={() => showDetailModal(task)}>View Details</Button>
+                    <Button 
+                        type="link" 
+                        onClick={() => showRejectModal(task)}
+                        disabled={task.status === 'Rejected' || task.status === 'Active'} // Disable for Rejected or Active tasks
+                    >
+                        Reject
+                    </Button>
+                    <Button 
+                        type="link" 
+                        onClick={() => handleApproveTask(task._id)} 
+                        disabled={task.status === 'Rejected' || task.status === 'Active'} // Disable for Rejected or Active tasks
+                    >
+                        Approve
+                    </Button>
+                    <Button 
+                        type="link" 
+                        onClick={() => showDetailModal(task)} 
+                    >
+                        View Details
+                    </Button>
                 </span>
             ),
         },
@@ -103,48 +160,53 @@ const PendingTasks: React.FC = () => {
 
     return (
         <>
-        <Admin_navb/>
-            
-        <div style={{ padding: 20 }}>
-            <Table
-                columns={columns}
-                dataSource={pendingTasksData}
-                pagination={false}
-                scroll={{ x: 'max-content' }}
-            />
-            {/* Rejection Modal */}
-            <Modal
-                title={`Reject Task: ${selectedTask?.taskName}`}
-                visible={isRejectModalVisible}
-                onOk={handleRejectOk}
-                onCancel={handleRejectCancel}
-            >
-                <Input.TextArea
-                    rows={4}
-                    value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
-                    placeholder="Please provide a reason for rejection..."
+            <Admin_navb />
+            <div style={{ padding: 20 }}>
+                <Table
+                    columns={columns}
+                    dataSource={tasks.map(task => ({ ...task, key: task._id }))}
+                    pagination={false}
+                    scroll={{ x: 'max-content' }}
                 />
-            </Modal>
 
-            {/* Detail Modal */}
-            <Modal
-                title={`Task Details: ${selectedTask?.taskName}`}
-                visible={isDetailModalVisible}
-                onCancel={handleDetailCancel}
-                footer={null}
-            >
-                {selectedTask && (
-                    <div>
-                        <p><strong>User Name:</strong> {selectedTask.userName}</p>
-                        <p><strong>Payout Category:</strong> {selectedTask.payoutCategory}</p>
-                        <p><strong>Category:</strong> {selectedTask.details.category}</p>
-                        <p><strong>Country:</strong> {selectedTask.details.country}</p>
-                        <p><strong>Description:</strong> {selectedTask.details.description}</p>
-                    </div>
-                )}
-            </Modal>
-        </div></>
+                {/* Rejection Modal */}
+                <Modal
+                    title={`Reject Task: ${selectedTask?.taskTitle}`}
+                    open={isRejectModalVisible}
+                    onOk={handleRejectTask}
+                    onCancel={handleRejectCancel}
+                >
+                    <Input.TextArea
+                        rows={4}
+                        value={rejectionReason}
+                        onChange={(e) => setRejectionReason(e.target.value)}
+                        placeholder="Please provide a reason for rejection..."
+                    />
+                </Modal>
+
+                {/* Detail Modal */}
+                <Modal
+                    title={`Task Details: ${selectedTask?.taskTitle}`}
+                    open={isDetailModalVisible}
+                    onCancel={handleDetailCancel}
+                    footer={null}
+                >
+                    {selectedTask && (
+                        <div>
+                            <p><strong>User Name:</strong> {selectedTask.userName}</p>
+                            <p><strong>Task Title:</strong> {selectedTask.taskTitle}</p>
+                            <p><strong>Description:</strong> {selectedTask.taskDescription}</p>
+                            <p><strong>Category:</strong> {selectedTask.category}</p>
+                            <p><strong>Workers Needed:</strong> {selectedTask.workersNeeded}</p>
+                            <p><strong>Publisher Reward:</strong> ${selectedTask.publisherReward}</p>
+                            <p><strong>Total Price Without Fee:</strong> ${selectedTask.totalPriceWithoutFee}</p>
+                            <p><strong>Advertiser ID:</strong> {selectedTask.advertiserId}</p>
+                            <p><strong>Status:</strong> {selectedTask.status}</p>
+                        </div>
+                    )}
+                </Modal>
+            </div>
+        </>
     );
 };
 

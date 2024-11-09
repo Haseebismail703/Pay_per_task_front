@@ -5,13 +5,13 @@ import api from '../api/api.js';
 import Navbar from '../usercomp/user_nav.js';
 
 interface Task {
-    _id: string; // Updated to string
+    _id: string;
     taskTitle: string;
     category: string;
     subcategory: string;
     workersNeeded: number;
     publisherReward: number;
-    status: 'Enabled' | 'Paused';
+    status: 'Enabled' | 'Paused' | 'Pending' | 'Reject' | 'Complete' | 'Running';
 }
 
 const TaskTable: React.FC = () => {
@@ -36,7 +36,7 @@ const TaskTable: React.FC = () => {
         fetchTasks();
     }, []);
 
-    const handleStatusToggle = async (taskId: string, currentStatus: 'Enabled' | 'Paused') => {
+    const handleStatusToggle = async (taskId: string, currentStatus: string) => {
         try {
             const updatedStatus = currentStatus === 'Enabled' ? 'Paused' : 'Enabled';
             await axios.put(`${api}/statusUpdate/${taskId}`, { status: updatedStatus });
@@ -91,7 +91,14 @@ const TaskTable: React.FC = () => {
             dataIndex: 'status',
             key: 'status',
             render: (status: string) => (
-                <Tag color={status === 'Enabled' ? 'green' : 'red'}>{status}</Tag>
+                <Tag color={
+                    status === 'Enabled' ? 'green' : 
+                    status === 'Paused' ? 'blue' : 
+                    status === 'Pending' ? 'orange' : 
+                    status === 'Reject' ? 'red' : 'grey'
+                }>
+                    {status}
+                </Tag>
             ),
         },
         {
@@ -101,6 +108,7 @@ const TaskTable: React.FC = () => {
                 <Button
                     type={record.status === 'Enabled' ? 'default' : 'primary'}
                     onClick={() => handleStatusToggle(record._id, record.status)}
+                    disabled={record.status === 'Pending' || record.status === 'Reject'}
                 >
                     {record.status === 'Enabled' ? 'Pause' : 'Enable'}
                 </Button>
@@ -113,7 +121,7 @@ const TaskTable: React.FC = () => {
         <Navbar/>
         <div style={{ padding: '20px' }}>
             <h2>All Tasks</h2>
-            <Table dataSource={tasks} columns={columns} rowKey="id" />
+            <Table dataSource={tasks} columns={columns} rowKey="_id" />
         </div>
         </>
     );
