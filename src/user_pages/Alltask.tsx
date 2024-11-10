@@ -6,13 +6,17 @@ const { Option } = Select;
 const { Title } = Typography;
 
 interface Task {
-    key: string;
-    title: string;
-    description: string;
+    _id: string;
+    userName: string;
+    taskTitle: string;
+    taskDescription: string;
     category: string;
-    progress: { completed: number; total: number };
-    budget: number; // Budget for high-paying task filter
-    date: Date; // For recent task filter
+    workersNeeded: number;
+    publisherReward: number;
+    totalPriceWithoutFee: number;
+    advertiserId: string;
+    active: boolean;
+    status: string;
 }
 
 const tasks: Task[] = [
