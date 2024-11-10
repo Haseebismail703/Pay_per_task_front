@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { Card, Row, Col, Progress, Select, Button, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Card, Row, Col, Progress, Select, Typography, notification } from 'antd';
 import Navbar from '../usercomp/user_nav';
+import axios from 'axios';
+import api from '../api/api.js';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -17,22 +19,43 @@ interface Task {
     advertiserId: string;
     active: boolean;
     status: string;
+    progress: {
+        completed: number;
+        total: number;
+    };
+    budget: number;
+    date: Date;
 }
 
-const tasks: Task[] = [
-    { key: '1', title: 'Install the app and login the account', description: 'Description for task 1', category: 'Development', progress: { completed: 20, total: 100 }, budget: 150, date: new Date('2024-11-01') },
-    { key: '2', title: 'Design a new logo', description: 'Description for task 2', category: 'Design', progress: { completed: 80, total: 100 }, budget: 300, date: new Date('2024-11-02') },
-    { key: '3', title: 'Create marketing plan', description: 'Description for task 3', category: 'Marketing', progress: { completed: 50, total: 100 }, budget: 250, date: new Date('2024-11-03') },
-    { key: '4', title: 'Write a blog post', description: 'Description for task 4', category: 'Writing', progress: { completed: 30, total: 100 }, budget: 100, date: new Date('2024-11-04') },
-    { key: '5', title: 'Develop a new feature', description: 'Description for task 5', category: 'Development', progress: { completed: 90, total: 100 }, budget: 200, date: new Date('2024-11-05') },
-];
-
 const TaskDisplay: React.FC = () => {
-    const [filteredTasks, setFilteredTasks] = useState<Task[]>(tasks);
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
     const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
     const [sortOption, setSortOption] = useState<string>('recent');
 
-    const categories = ['Development', 'Design', 'Marketing', 'Writing'];
+    const categories = ['development', 'design', 'marketing', 'writing'];
+
+    // Fetch tasks data from API
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const response = await axios.get<Task[]>(`${api}/getTaskuser`);
+                const tasksWithProgress = response.data.map(task => ({
+                    ...task,
+                    progress: { completed: Math.min(task.workersNeeded, task.workersNeeded), total: task.workersNeeded }, // Example progress calculation
+                }));
+                setTasks(tasksWithProgress);
+                setFilteredTasks(tasksWithProgress);
+            } catch (error) {
+                notification.error({
+                    message: 'Error',
+                    description: 'Failed to fetch tasks.',
+                });
+            }
+        };
+
+        fetchTasks();
+    }, []);
 
     const handleCategoryChange = (value: string) => {
         setCategoryFilter(value);
@@ -52,7 +75,7 @@ const TaskDisplay: React.FC = () => {
         }
 
         if (sort === 'recent') {
-            updatedTasks.sort((a, b) => b.date.getTime() - a.date.getTime());
+            updatedTasks.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         } else if (sort === 'highPaying') {
             updatedTasks.sort((a, b) => b.budget - a.budget);
         }
@@ -91,14 +114,14 @@ const TaskDisplay: React.FC = () => {
 
                 <Row gutter={[16, 16]}>
                     {filteredTasks.map((task) => (
-                        <Col xs={24} sm={12} md={8} lg={6} key={task.key}>
+                        <Col xs={24} sm={12} md={8} lg={6} key={task._id}>
                             <Card
                                 hoverable
-                                title={task.title}
+                                title={task.taskTitle}
                                 bordered={true}
                                 style={{ width: '100%', borderRadius: '8px' }}
                             >
-                                <p>{task.description}</p>
+                                <p>{task.taskDescription}</p>
                                 <Progress
                                     percent={(task.progress.completed / task.progress.total) * 100}
                                     status={task.progress.completed >= task.progress.total ? 'success' : 'active'}
@@ -106,7 +129,7 @@ const TaskDisplay: React.FC = () => {
                                 <p style={{ marginTop: '10px' }}>
                                     Progress: {task.progress.completed} out of {task.progress.total}
                                 </p>
-                                <p style={{ fontWeight: 'bold' }}>${task.budget}</p>
+                                <p style={{ fontWeight: 'bold' }}>${task.publisherReward}</p>
                             </Card>
                         </Col>
                     ))}

@@ -43,7 +43,8 @@ const PendingTasks: React.FC = () => {
     const handleApproveTask = async (taskId: string) => {
         try {
             await axios.put(`${api}/approve_task/${taskId}`, {
-                status: "Approve"
+                status: "Running",
+                active : true
             });
             fetchTasks();
             notification.success({
