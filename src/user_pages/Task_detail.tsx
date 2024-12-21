@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Upload, Row, Col, Typography, Card, Image, Button, Form } from 'antd';
+import { Upload, Row, Col, Typography, Card, Image, Button, Form, Spin } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Navbar from '../usercomp/user_nav';
 import axios from 'axios';
 import api from '../api/api';
 import { useParams } from 'react-router-dom';
+
 const { Title, Paragraph } = Typography;
 
 const TaskDetailPage: React.FC = () => {
@@ -19,7 +20,8 @@ const TaskDetailPage: React.FC = () => {
   const [taskDetails, setTaskDetails] = useState<Task | null>(null);
   const [fileList, setFileList] = useState<any[]>([]);
   const [proof, setProof] = useState('');
-   let {taskId} = useParams()
+  const [loading, setLoading] = useState(false);  // For showing the loader during task upload
+  const { taskId } = useParams();
 
   const handleFileChange = (info: any) => {
     if (info.fileList.length > 3) {
@@ -32,53 +34,55 @@ const TaskDetailPage: React.FC = () => {
     setProof(e.target.value);
   };
 
-  const handleUploadTask = async() => {
+  const handleUploadTask = async () => {
     try {
-        const formData = new FormData();
-    
-        // Append files to formData
-        fileList.forEach((file) => {
-          formData.append('file', file.originFileObj);
-        });
-    
-        // Append proof text
-        formData.append('file', proof);
-    
-        // Append additional data
-        formData.append('userId', '672ba5b9dd9494d7ee962db6UserId'); 
-        formData.append('taskId', taskId ); 
-        formData.append('comment', proof); 
-    
-        // Make a POST request
-        const response = await axios.post(`${api}/submitTask`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-    
-        console.log('Upload response:', response.data);
-    
-        // Optionally reset fileList and proof
-        setFileList([]);
-        setProof('');
-      } catch (error) {
-        console.error('Error uploading task:', error);
-      }
+      setLoading(true);  // Show loader when upload starts
+      const formData = new FormData();
 
+      // Append files to formData
+      fileList.forEach((file) => {
+        formData.append('file', file.originFileObj);
+      });
+
+      // Append proof text
+      formData.append('proof', proof);
+
+      // Append additional data
+      formData.append('userId', '672ba5b9dd9494d7ee962db6UserId');
+      formData.append('taskId', taskId || '');
+      formData.append('comment', proof);
+
+      // Make a POST request
+      const response = await axios.post(`${api}/submitTask`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('Upload response:', response.data);
+
+      // Reset state
+      setFileList([]);
+      setProof('');
+    } catch (error) {
+      console.error('Error uploading task:', error);
+    } finally {
+      setLoading(false);  // Hide loader after upload
+    }
   };
 
-
-  
   const getTaskById = async () => {
     try {
+      setLoading(true);  // Show loader while fetching task details
       const res = await axios.get<Task>(`${api}/getTaskByuser/672f9356f4a6e888e3312b67`);
       setTaskDetails(res.data);
       console.log(res.data);
     } catch (error) {
       console.error('Error fetching task details:', error);
+    } finally {
+      setLoading(false);  // Hide loader after task details are fetched
     }
   };
-
 
   useEffect(() => {
     getTaskById();
@@ -91,14 +95,15 @@ const TaskDetailPage: React.FC = () => {
         <div style={{ maxWidth: '600px', width: '100%' }}>
           <Title level={3} style={{ textAlign: 'center' }}>Task Details</Title>
 
-          {taskDetails ? (
+          {loading ? (
+            <Spin size="large" style={{ display: 'block', margin: 'auto', padding: '50px' }} />
+          ) : taskDetails ? (
             <>
               <Title level={4}>Task Details Preview:</Title>
               <Paragraph><strong>Task Title:</strong> {taskDetails.taskTitle}</Paragraph>
               <Paragraph><strong>Description:</strong> {taskDetails.taskDescription}</Paragraph>
-               <Paragraph><strong>Category:</strong> {taskDetails.category}</Paragraph>
+              <Paragraph><strong>Category:</strong> {taskDetails.category}</Paragraph>
               <Paragraph><strong>Price:</strong> ${taskDetails.publisherReward || 'N/A'}</Paragraph>
-             
 
               <Title level={4}>Upload Images</Title>
               <Upload
@@ -139,9 +144,9 @@ const TaskDetailPage: React.FC = () => {
                 />
               </Form.Item>
 
-              <Button 
-                type="primary" 
-                onClick={handleUploadTask} 
+              <Button
+                type="primary"
+                onClick={handleUploadTask}
                 style={{ width: '100%', marginTop: '20px' }}
               >
                 Upload Task
