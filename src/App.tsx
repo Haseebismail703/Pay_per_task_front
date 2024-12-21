@@ -30,7 +30,7 @@ function App() {
           {/* Publisher */}
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/all-tasks' element={<Alltask />} />
-          <Route path='/all-tasks/:id' element={<TaskSubmitPage />} />
+          <Route path='/all-tasks/:taskId' element={<TaskSubmitPage />} />
           <Route path='/my-work' element={<Opera_hist />} />
           <Route path='/withdraw' element={<Writhdrow />} />
           <Route path='/transaction-history' element={<Trans_hist />} />
@@ -43,7 +43,7 @@ function App() {
           <Route path='/my-campaign/:Statistics' element={<ViewStatisticsPage />} />
           <Route path='/my_task' element={<My_task />} />
           <Route path='/add-fund' element={<Deposite />} />
-
+      
           {/* Admin Routes */}
           <Route path='/admin/dashboard' element={<Admin_dash />} />
           <Route path='/admin/task/pending' element={<PendingTasks/>} />
@@ -53,9 +53,7 @@ function App() {
           <Route path='/admin/payment_request' element={<PaymentRequestPage/>} />
           <Route path='/admin/payment_history' element={<Payment_history/>} />
           <Route path='/admin/profile' element={<Admin_profile/>} />
-          <Route path='/admin/login' element={<Admin_login/>} />
-          
-
+          <Route path='/admin/login' element={<Admin_login/>} /> 
         </Routes>
       </BrowserRouter>
     </div>

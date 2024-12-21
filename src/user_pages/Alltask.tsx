@@ -3,6 +3,7 @@ import { Card, Row, Col, Progress, Select, Typography, notification } from 'antd
 import Navbar from '../usercomp/user_nav';
 import axios from 'axios';
 import api from '../api/api.js';
+import { Link } from 'react-router-dom';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -115,8 +116,9 @@ const TaskDisplay: React.FC = () => {
                 <Row gutter={[16, 16]}>
                     {filteredTasks.map((task) => (
                         <Col xs={24} sm={12} md={8} lg={6} key={task._id}>
+                            <Link to={`/all-tasks/${task._id}`}>
                             <Card
-                                hoverable
+                            hoverable
                                 title={task.taskTitle}
                                 bordered={true}
                                 style={{ width: '100%', borderRadius: '8px' }}
@@ -131,6 +133,7 @@ const TaskDisplay: React.FC = () => {
                                 </p>
                                 <p style={{ fontWeight: 'bold' }}>${task.publisherReward}</p>
                             </Card>
+                            </Link>
                         </Col>
                     ))}
                 </Row>
