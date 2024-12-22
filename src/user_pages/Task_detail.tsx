@@ -48,10 +48,10 @@ const TaskDetailPage: React.FC = () => {
       formData.append('proof', proof);
 
       // Append additional data
-      formData.append('userId', '672ba5b9dd9494d7ee962db6UserId');
+      formData.append('userId', '672ba5b9dd9494d7ee962db6');
       formData.append('taskId', taskId || '');
       formData.append('comment', proof);
-
+      formData.append('advId','672ba5b9dd9494d7ee962db6')
       // Make a POST request
       const response = await axios.post(`${api}/submitTask`, formData, {
         headers: {

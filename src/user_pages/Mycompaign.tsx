@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, notification, Tag } from 'antd';
+import { PauseOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import api from '../api/api.js';
 import Navbar from '../usercomp/user_nav.js';
-
+import { Link } from 'react-router-dom';
 interface Task {
     _id: string;
     taskTitle: string;
@@ -15,7 +16,7 @@ interface Task {
     active: boolean;
 }
 
-const TaskTable: React.FC = () => {
+const Mycompaign: React.FC = () => {
     const [tasks, setTasks] = useState<Task[]>([]);
 
     // Fetch tasks data from API
@@ -117,6 +118,17 @@ const TaskTable: React.FC = () => {
             ),
         },
         {
+            title: 'View Proof',
+            key: 'actions',
+            render: (_: any, record: Task) => (
+                <Button
+                    // type="primary" 
+                >
+                    <Link to={`/my-campaign/${record._id}`}>View site</Link> 
+                </Button>
+            ),
+        },
+        {
             title: 'Actions',
             key: 'actions',
             render: (_: any, record: Task) => (
@@ -124,6 +136,7 @@ const TaskTable: React.FC = () => {
                     type={record.active ? 'default' : 'primary'}
                     onClick={() => handleStatusToggle(record._id, record.active)}
                     disabled={record.status === 'Pending' || record.status === 'Reject' || record.status === 'Complete'}
+                    icon={record.active ? <PauseOutlined /> : <PlayCircleOutlined />} // Set the icon based on the active status
                 >
                     {record.active ? 'Pause' : 'Enable'}
                 </Button>
@@ -142,4 +155,4 @@ const TaskTable: React.FC = () => {
     );
 };
 
-export default TaskTable;
+export default Mycompaign;
