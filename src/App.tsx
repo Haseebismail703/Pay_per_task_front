@@ -40,7 +40,7 @@ function App() {
           {/* advertiser */}
           <Route path='/create-campaign' element={<CreateTask />} />
           <Route path='/my-campaign' element={<Mycompaign />} />
-          <Route path='/my-campaign/:Statistics' element={<ViewStatisticsPage />} />
+          <Route path='/my-campaign/:id' element={<ViewStatisticsPage />} />
           <Route path='/my_task' element={<My_task />} />
           <Route path='/add-fund' element={<Deposite />} />
       
