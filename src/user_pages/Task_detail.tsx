@@ -48,6 +48,7 @@ const TaskDetailPage: React.FC = () => {
       formData.append('proof', proof);
 
       // Append additional data
+      formData.append('country', 'usa');
       formData.append('userId', '672ba5b9dd9494d7ee962db6');
       formData.append('taskId', taskId || '');
       formData.append('comment', proof);

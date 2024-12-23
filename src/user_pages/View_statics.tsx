@@ -1,215 +1,173 @@
-import React, { useState } from 'react';
-import { Table, Button, Modal, Input, Row, Col, Typography, Image, Tag, Tooltip } from 'antd';
-import {
-    CheckCircleOutlined,
-    CloseCircleOutlined,
-    ReloadOutlined,
-    EyeOutlined,
-    
-} from '@ant-design/icons';
-
-const { Title } = Typography;
-const { TextArea } = Input;
-
-interface Task {
+import React, { useState, useEffect } from "react";
+import { Table, Button, Modal, Input, Card, Space, Image, Spin } from "antd";
+import { EditOutlined, EyeOutlined, CheckOutlined } from "@ant-design/icons";
+import axios from "axios";
+import api from "../api/api";
+import Navbar from "../usercomp/user_nav";
+import { useParams } from "react-router-dom";
+interface TableData {
     key: string;
     username: string;
     country: string;
-    payout: string;
-    date: string;
-    status: 'Accepted' | 'Rejected' | 'Revision';
-    proofImage: string;
+    publisherReward: number;
+    created_at: string;
+    imgurl: string[];
 }
 
-const ViewStatisticsPage: React.FC = () => {
-    const [tasks, setTasks] = useState<Task[]>([
-        { key: '1', username: 'John Doe', country: 'USA', payout: '$50', date: '2023-11-01', status: 'Accepted', proofImage: '/path/to/image1.jpg' },
-        { key: '2', username: 'Jane Smith', country: 'Canada', payout: '$40', date: '2023-11-02', status: 'Rejected', proofImage: '/path/to/image2.jpg' },
-        { key: '3', username: 'Alice Johnson', country: 'UK', payout: '$30', date: '2023-11-03', status: 'Revision', proofImage: '/path/to/image3.jpg' },
-    ]);
+const App: React.FC = () => {
+    const [data, setData] = useState<TableData[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalType, setModalType] = useState<"revision" | "reject" | "proof" | null>(null);
+    const [selectedRecord, setSelectedRecord] = useState<TableData | null>(null);
+    const [reason, setReason] = useState("");
+    const {taskId} = useParams()
+    // Fetch data from API
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`${api}/getallproofbyId/${taskId}`); // Replace with your API URL
+                const formattedData = response.data.map((item: any, index: number) => ({
+                    key: `${index + 1}`,
+                    username: item.username,
+                    country: item.country,
+                    publisherReward: item.publisherReward,
+                    created_at: item.created_at?.substring(0, 10),
+                    imgurl: item.imgurl?.map((imgObj: any) => imgObj.image_url) || [], // Convert objects to strings
+                }));
+                setData(formattedData);
+                console.log(response.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    const [isRevisionModalVisible, setIsRevisionModalVisible] = useState(false);
-    const [isProofModalVisible, setIsProofModalVisible] = useState(false);
-    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-    const [revisionComment, setRevisionComment] = useState('');
+        fetchData();
+    }, []);
 
-    const showRevisionModal = (task: Task) => {
-        setSelectedTask(task);
-        setIsRevisionModalVisible(true);
+    const handleAction = (type: "revision" | "reject" | "proof", record: TableData) => {
+        setModalType(type);
+        setSelectedRecord(record);
+        setIsModalOpen(true);
     };
 
-    const showProofModal = (task: Task) => {
-        setSelectedTask(task);
-        setIsProofModalVisible(true);
+    const handleOk = () => {
+        console.log({ reason, record: selectedRecord });
+        setReason("");
+        setIsModalOpen(false);
     };
 
-    const handleRevisionSubmit = () => {
-        console.log('Revision comment:', revisionComment);
-        setIsRevisionModalVisible(false);
-        setRevisionComment('');
+    const handleCancel = () => {
+        setReason("");
+        setIsModalOpen(false);
     };
 
-    const handleAction = (task: Task, action: 'Accepted' | 'Rejected' | 'Revision') => {
-        setTasks((prevTasks) =>
-            prevTasks.map((t) =>
-                t.key === task.key ? { ...t, status: action } : t
-            )
-        );
-    };
-
-    const handleTableData = (status: string) => {
-        return tasks.filter((task) => task.status === status);
-    };
-
-    const getColumns = (showActions: boolean) => [
+    const columns = [
         {
-            title: 'User Name',
-            dataIndex: 'username',
-            key: 'username',
+            title: "Username",
+            dataIndex: "username",
+            key: "username",
         },
         {
-            title: 'Country',
-            dataIndex: 'country',
-            key: 'country',
+            title: "Country",
+            dataIndex: "country",
+            key: "country",
         },
         {
-            title: 'Payout',
-            dataIndex: 'payout',
-            key: 'payout',
+            title: "publisherReward",
+            dataIndex: "publisherReward",
+            key: "publisherReward",
+            render: (publisherReward: number) => `$${publisherReward}`,
         },
         {
-            title: 'Date',
-            dataIndex: 'date',
-            key: 'date',
+            title: "created_at",
+            dataIndex: "created_at",
+            key: "created_at",
         },
         {
-            title: 'Status',
-            key: 'status',
-            render: (_: any, task: Task) =>
-                showActions ? (
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                        <Tooltip title="Accept">
-                            <Button
-                                type="primary"
-                                icon={<CheckCircleOutlined />}
-                                onClick={() => handleAction(task, 'Accepted')}
-                            />
-                        </Tooltip>
-                        <Tooltip title="Reject">
-                            <Button
-                                type="default"
-                                icon={<CloseCircleOutlined />}
-                                onClick={() => handleAction(task, 'Rejected')}
-                            />
-                        </Tooltip>
-                        <Tooltip title="Revision">
-                            <Button
-                                type="dashed"
-                                icon={<ReloadOutlined />}
-                                onClick={() => showRevisionModal(task)}
-                            />
-                        </Tooltip>
-                        <Tooltip title="View Proof">
-                            <Button
-                                icon={<EyeOutlined />}
-                                onClick={() => showProofModal(task)}
-                            />
-                        </Tooltip>
-                    </div>
-                ) : (
-                    <Tag color={
-                        task.status === 'Accepted' ? 'green' :
-                        task.status === 'Rejected' ? 'red' : 'orange'
-                    }>
-                        {task.status}
-                    </Tag>
-                ),
+            title: "Action",
+            key: "action",
+            render: (_: any, record: TableData) => (
+                <Space>
+                    <Button
+                        icon={<CheckOutlined />}
+                        type="primary"
+                        onClick={() => console.log("Accepted:", record)}
+                    >
+                        Accept
+                    </Button>
+                    <Button
+                        icon={<EditOutlined />}
+                        type="default"
+                        onClick={() => handleAction("revision", record)}
+                    >
+                        Revision
+                    </Button>
+                    <Button danger onClick={() => handleAction("reject", record)}>
+                        Reject
+                    </Button>
+                    <Button
+                        icon={<EyeOutlined />}
+                        type="link"
+                        onClick={() => handleAction("proof", record)}
+                    >
+                        View Proof
+                    </Button>
+                </Space>
+            ),
         },
     ];
 
     return (
-        <div style={{ padding: '20px' }}>
-            <Title level={3}>Task Statistics</Title>
-
-            <Row gutter={[16, 16]} style={{ marginBottom: '20px' }}>
-                <Col span={24}>
-                    <Title level={4}>All Tasks</Title>
-                    <Table
-                        columns={getColumns(true)} // Show actions with icons in All Tasks table
-                        dataSource={tasks}
-                        pagination={{ pageSize: 5 }}
-                        scroll={{ x: '100%' }}
-                        bordered
-                    />
-                </Col>
-
-                <Col span={24}>
-                    <Title level={4}>Accepted Tasks</Title>
-                    <Table
-                        columns={getColumns(false)} // No actions, only status tag in Accepted table
-                        dataSource={handleTableData('Accepted')}
-                        pagination={{ pageSize: 5 }}
-                        scroll={{ x: '100%' }}
-                        bordered
-                    />
-                </Col>
-
-                <Col span={24}>
-                    <Title level={4}>Rejected Tasks</Title>
-                    <Table
-                        columns={getColumns(false)} // No actions, only status tag in Rejected table
-                        dataSource={handleTableData('Rejected')}
-                        pagination={{ pageSize: 5 }}
-                        scroll={{ x: '100%' }}
-                        bordered
-                    />
-                </Col>
-
-                <Col span={24}>
-                    <Title level={4}>Revision Tasks</Title>
-                    <Table
-                        columns={getColumns(false)} // No actions, only status tag in Revision table
-                        dataSource={handleTableData('Revision')}
-                        pagination={{ pageSize: 5 }}
-                        scroll={{ x: '100%' }}
-                        bordered
-                    />
-                </Col>
-            </Row>
-
-            {/* Revision Modal */}
-            <Modal
-                title="Provide Revision Comments"
-                visible={isRevisionModalVisible}
-                onOk={handleRevisionSubmit}
-                onCancel={() => setIsRevisionModalVisible(false)}
-            >
-                <TextArea
-                    rows={4}
-                    value={revisionComment}
-                    onChange={(e) => setRevisionComment(e.target.value)}
-                    placeholder="Enter revision comments here..."
+        <>
+        <Navbar/> 
+        <center>
+            <h1>All Task proof</h1>
+        </center>
+        <Card>
+            {isLoading ? (
+                <center>
+                  <Spin  size="large" />  
+                </center>
+            ) : (
+                <Table
+                    columns={columns}
+                    dataSource={data}
+                    pagination={{ pageSize: 5 }}
+                    scroll={{"x" : "100%"}}
                 />
-            </Modal>
-
-            {/* Proof Modal */}
+            )}
             <Modal
-                title="Proof Image"
-                visible={isProofModalVisible}
-                onOk={() => setIsProofModalVisible(false)}
-                onCancel={() => setIsProofModalVisible(false)}
-                footer={null}
+                title={modalType === "proof" ? "Proof Images" : "Reason"}
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
             >
-                {selectedTask && (
-                    <Image
-                        src={selectedTask.proofImage}
-                        alt="Proof"
-                        style={{ width: '100%', height: 'auto' }}
+                {modalType === "proof" && selectedRecord ? (
+                    <Space direction="vertical">
+                        {selectedRecord?.imgurl.length > 0 ? (
+                            selectedRecord.imgurl.map((img, idx) => (
+                                <Image key={idx} src={img} alt={`proof-${idx}`} />
+                            ))
+                        ) : (
+                            <p>No proof images available.</p>
+                        )}
+                    </Space>
+                ) : (
+                    <Input.TextArea
+                        rows={4}
+                        value={reason}
+                        onChange={(e) => setReason(e.target.value)}
+                        placeholder={`Enter reason for ${modalType}`}
                     />
                 )}
             </Modal>
-        </div>
+
+        </Card>
+        </>
     );
 };
 
-export default ViewStatisticsPage;
+export default App;

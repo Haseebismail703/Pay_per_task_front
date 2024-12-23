@@ -124,7 +124,7 @@ const Mycompaign: React.FC = () => {
                 <Button
                     // type="primary" 
                 >
-                    <Link to={`/my-campaign/${record._id}`}>View site</Link> 
+                    <Link to={`/my-campaign/${record._id}`}>View Proof</Link> 
                 </Button>
             ),
         },
