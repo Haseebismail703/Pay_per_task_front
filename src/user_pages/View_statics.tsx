@@ -27,9 +27,8 @@ const ViewStatics: React.FC = () => {
     const [reason, setReason] = useState("");
     const { id } = useParams();
 
-    // Fetch data from API
-    useEffect(() => {
-        const fetchData = async () => {
+    // Fetch data from API 
+    const fetchData = async () => {
             try {
                 const response = await axios.get(`${api}/getallproofbyId/${id}`);
                 const formattedData = response.data.map((item: any, index: number) => ({
@@ -50,6 +49,7 @@ const ViewStatics: React.FC = () => {
             }
         };
 
+    useEffect(() => {
         fetchData();
     }, [id]);
 
@@ -61,6 +61,7 @@ const ViewStatics: React.FC = () => {
                 status,
                 ...(status === "reject" || status === "revision" ? { revisionComments: reason } : {}),
             });
+            fetchData()
             message.success(`${status} action applied successfully.`);
             setData((prevData) => prevData.filter((item) => item.key !== record.key));
             setIsModalOpen(false);

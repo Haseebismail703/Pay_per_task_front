@@ -156,7 +156,7 @@ const ApRejRev: React.FC = () => {
     };
 
     const filteredTasks = {
-        paid: tasks.filter((task) => task.status === "aproved"),
+        paid: tasks.filter((task) => task.status === "approved"),
         rejected: tasks.filter((task) => task.status === "reject"),
         revision: tasks.filter((task) => task.status === "revision"),
     };
