@@ -15,6 +15,7 @@ interface TableData {
     imgurl: string[];
     userId: string;
     taskId: string;
+    revision: boolean;
 }
 
 const ViewStatics: React.FC = () => {
@@ -25,30 +26,44 @@ const ViewStatics: React.FC = () => {
     const [modalType, setModalType] = useState<"revision" | "reject" | null>(null);
     const [selectedRecord, setSelectedRecord] = useState<TableData | null>(null);
     const [reason, setReason] = useState("");
+    const [revisionTask, setrevisionTask] = useState<TableData[]>([]);
     const { id } = useParams();
 
     // Fetch data from API 
     const fetchData = async () => {
-            try {
-                const response = await axios.get(`${api}/getallproofbyId/${id}`);
-                const formattedData = response.data.map((item: any, index: number) => ({
-                    key: `${index + 1}`,
-                    username: item.username,
-                    country: item.country,
-                    publisherReward: item.publisherReward,
-                    created_at: item.created_at?.substring(0, 10),
-                    imgurl: item.imgurl?.map((imgObj: any) => imgObj.image_url) || [],
-                    userId: item.userId,
-                    taskId: item.taskId,
-                }));
-                setData(formattedData);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
+        try {
+            const response = await axios.get(`${api}/getallproofbyId/${id}`);
+            const formattedData = response.data?.getProof.map((item: any, index: number) => ({
+                key: `${index + 1}`,
+                username: item.username,
+                country: item.country,
+                publisherReward: item.publisherReward,
+                created_at: item.created_at?.substring(0, 10),
+                imgurl: item.imgurl?.map((imgObj: any) => imgObj.image_url) || [],
+                userId: item.userId,
+                taskId: item.taskId,
+                revision: item.revision,
+            }));
+            setData(formattedData);
+            const revisionTaskfrom = response.data?.revision.map((item: any, index: number) => ({
+                key: `${index + 1}`,
+                username: item.username,
+                country: item.country,
+                publisherReward: item.publisherReward,
+                created_at: item.created_at?.substring(0, 10),
+                imgurl: item.imgurl?.map((imgObj: any) => imgObj.image_url) || [],
+                userId: item.userId,
+                taskId: item.taskId,
+                revision: item.revision,
+            }));
+            setrevisionTask(revisionTaskfrom);
+            // console.log(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     useEffect(() => {
         fetchData();
     }, [id]);
@@ -159,11 +174,70 @@ const ViewStatics: React.FC = () => {
         },
     ];
 
+    const revisionColumns = [
+        {
+            title: "Username",
+            dataIndex: "username",
+            key: "username",
+        },
+        {
+            title: "Country",
+            dataIndex: "country",
+            key: "country",
+        },
+        {
+            title: "Publisher Reward",
+            dataIndex: "publisherReward",
+            key: "publisherReward",
+            render: (publisherReward: number) => `$${publisherReward}`,
+        },
+        {
+            title: "Created At",
+            dataIndex: "created_at",
+            key: "created_at",
+        },
+        {
+            title: "Action",
+            key: "action",
+            render: (_: any, record: TableData) => (
+                <Space>
+                    <Button
+                        icon={<CheckOutlined />}
+                        type="primary"
+                        onClick={() => UpdateTaskProf("approved", record)}
+                    >
+                        Accept
+                    </Button>
+                    <Button
+                        danger
+                        onClick={() => {
+                            setModalType("reject");
+                            setSelectedRecord(record);
+                            setIsModalOpen(true);
+                        }}
+                    >
+                        Reject
+                    </Button>
+                    <Button
+                        icon={<EyeOutlined />}
+                        type="link"
+                        onClick={() => {
+                            setSelectedRecord(record);
+                            setIsProofModalOpen(true);
+                        }}
+                    >
+                        View Proof
+                    </Button>
+                </Space>
+            ),
+        },
+    ];
     return (
         <>
             <Navbar />
+
             <center>
-                <h1>All Task Proof</h1>
+                <h2>Pending Task</h2>
             </center>
             <Card>
                 {isLoading ? (
@@ -212,6 +286,29 @@ const ViewStatics: React.FC = () => {
                     </Space>
                 </Modal>
             </Card>
+
+
+
+
+            <br />
+            <center>
+                <h2>Revision Task</h2>
+            </center>
+            <Card>
+                {isLoading ? (
+                    <center>
+                        <Spin size="large" />
+                    </center>
+                ) : (
+                    <Table
+                        columns={revisionColumns}
+                        dataSource={revisionTask}
+                        pagination={{ pageSize: 5 }}
+                        scroll={{ x: "100%" }}
+                    />
+                )}
+            </Card>
+
         </>
     );
 };

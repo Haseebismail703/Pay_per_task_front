@@ -159,7 +159,7 @@ const Mycompaign: React.FC = () => {
             <Navbar />
             <div style={{ padding: '20px' }}>
                 <h2>All Tasks</h2>
-                <Table dataSource={tasks} columns={columns} rowKey="_id" />
+                <Table dataSource={tasks} columns={columns} rowKey="_id" scroll={{"x": "100%"}} />
             </div>
         </>
     );
