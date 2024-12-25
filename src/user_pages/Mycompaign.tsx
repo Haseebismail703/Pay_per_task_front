@@ -97,11 +97,11 @@ const Mycompaign: React.FC = () => {
             render: (status: string) => (
                 <Tag color={
                     status === 'Pending' ? 'orange' :
-                    status === 'Approve' ? 'purple' :
-                    status === 'Reject' ? 'red' :
-                    status === 'Running' ? 'cyan' :
-                    status === 'Complete' ? 'green-inverse' : // Custom inverse green for 'Complete'
-                    'grey' // Default color if status is not recognized
+                        status === 'Approve' ? 'purple' :
+                            status === 'Reject' ? 'red' :
+                                status === 'Running' ? 'cyan' :
+                                    status === 'Complete' ? 'green-inverse' : // Custom inverse green for 'Complete'
+                                        'grey' // Default color if status is not recognized
                 }>
                     {status}
                 </Tag>
@@ -122,9 +122,9 @@ const Mycompaign: React.FC = () => {
             key: 'actions',
             render: (_: any, record: Task) => (
                 <Button
-                    // type="primary" 
+                // type="primary" 
                 >
-                    <Link to={`/my-campaign/${record._id}`}>View Proof</Link> 
+                    <Link to={`/my-campaign/${record._id}`}>View Proof</Link>
                 </Button>
             ),
         },

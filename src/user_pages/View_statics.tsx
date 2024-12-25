@@ -13,15 +13,16 @@ interface TableData {
     publisherReward: number;
     created_at: string;
     imgurl: string[];
-    userId: string,
-    taskId: string
+    userId: string;
+    taskId: string;
 }
 
 const ViewStatics: React.FC = () => {
     const [data, setData] = useState<TableData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalType, setModalType] = useState<"revision" | "reject" | "proof" | null>(null);
+    const [isProofModalOpen, setIsProofModalOpen] = useState(false);
+    const [modalType, setModalType] = useState<"revision" | "reject" | null>(null);
     const [selectedRecord, setSelectedRecord] = useState<TableData | null>(null);
     const [reason, setReason] = useState("");
     const { id } = useParams();
@@ -30,7 +31,7 @@ const ViewStatics: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${api}/getallproofbyId/${id}`); // Replace with your API URL
+                const response = await axios.get(`${api}/getallproofbyId/${id}`);
                 const formattedData = response.data.map((item: any, index: number) => ({
                     key: `${index + 1}`,
                     username: item.username,
@@ -39,7 +40,7 @@ const ViewStatics: React.FC = () => {
                     created_at: item.created_at?.substring(0, 10),
                     imgurl: item.imgurl?.map((imgObj: any) => imgObj.image_url) || [],
                     userId: item.userId,
-                    taskId: item.taskId
+                    taskId: item.taskId,
                 }));
                 setData(formattedData);
             } catch (error) {
@@ -53,17 +54,14 @@ const ViewStatics: React.FC = () => {
     }, [id]);
 
     const UpdateTaskProf = async (status: string, record: TableData) => {
-        console.log(record);
         try {
             await axios.put(`${api}/UpdateTaskProf`, {
                 userId: record.userId,
                 taskId: record.taskId,
                 status,
                 ...(status === "reject" || status === "revision" ? { revisionComments: reason } : {}),
-                // revisionComments : reason
             });
             message.success(`${status} action applied successfully.`);
-            // Update the local state to remove the processed record
             setData((prevData) => prevData.filter((item) => item.key !== record.key));
             setIsModalOpen(false);
         } catch (error) {
@@ -73,7 +71,6 @@ const ViewStatics: React.FC = () => {
     };
 
     const handleOk = () => {
-
         if (modalType && selectedRecord) {
             const status = modalType === "reject" ? "reject" : "revision";
             UpdateTaskProf(status, selectedRecord);
@@ -84,6 +81,11 @@ const ViewStatics: React.FC = () => {
     const handleCancel = () => {
         setReason("");
         setIsModalOpen(false);
+    };
+
+    const handleProofModalClose = () => {
+        setIsProofModalOpen(false);
+        setSelectedRecord(null);
     };
 
     const columns = [
@@ -145,9 +147,8 @@ const ViewStatics: React.FC = () => {
                         icon={<EyeOutlined />}
                         type="link"
                         onClick={() => {
-                            setModalType("proof");
                             setSelectedRecord(record);
-                            setIsModalOpen(true);
+                            setIsProofModalOpen(true);
                         }}
                     >
                         View Proof
@@ -176,31 +177,39 @@ const ViewStatics: React.FC = () => {
                         scroll={{ x: "100%" }}
                     />
                 )}
+                {/* Revision/Reject Modal */}
                 <Modal
-                    title={modalType === "proof" ? "Proof Images" : "Reason"}
+                    title="Reason"
                     open={isModalOpen}
                     onOk={handleOk}
                     onCancel={handleCancel}
                 >
-                    {modalType === "proof" && selectedRecord ? (
-                        <Space direction="vertical">
-                            {selectedRecord.imgurl.length > 0 ? (
-                                selectedRecord.imgurl.map((img, idx) => (
-                                    <Image key={idx} src={img} alt={`proof-${idx}`} />
-                                ))
-                            ) : (
-                                <p>No proof images available.</p>
-                            )}
-                        </Space>
-                    ) : (
-                        <Input.TextArea
-                            rows={4}
-                            value={reason}
-                            onChange={(e) => setReason(e.target.value)}
-                            placeholder={`Enter reason for ${modalType}`}
-                        />
-                    )}
-                </Modal>;
+                    <Input.TextArea
+                        rows={4}
+                        value={reason}
+                        onChange={(e) => setReason(e.target.value)}
+                        placeholder={`Enter reason for ${modalType}`}
+                    />
+                </Modal>
+
+                {/* Proof Modal */}
+                <Modal
+                    title="Proof Images"
+                    open={isProofModalOpen}
+                    onCancel={handleProofModalClose}
+                    footer={null}
+                >
+                    <Space direction="vertical">
+                        {Array.isArray(selectedRecord?.imgurl) && selectedRecord.imgurl.length > 0 ? (
+                            selectedRecord.imgurl.map((img, idx) => (
+                                <Image key={idx} src={img} alt={`proof-${idx}`} />
+                            ))
+                        ) : (
+                            <p>No proof images available.</p>
+                        )}
+
+                    </Space>
+                </Modal>
             </Card>
         </>
     );
