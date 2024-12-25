@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, notification, Tag } from 'antd';
+import { Table, Button, notification, Tag, Tooltip } from 'antd';
 import { PauseOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import api from '../api/api.js';
@@ -125,6 +125,16 @@ const Mycompaign: React.FC = () => {
                 // type="primary" 
                 >
                     <Link to={`/my-campaign/${record._id}`}>View Proof</Link>
+                </Button>
+            ),
+        },
+        {
+            title: 'View App/Rej/Rev',
+            key: 'actions',
+            render: (_: any, record: Task) => (
+                <Button
+                >
+                    <Link to={`/my-campaign/${record._id}/allApRejRevTask`}><Tooltip title="view all user App/Rej/Rev task">View All </Tooltip></Link>
                 </Button>
             ),
         },
