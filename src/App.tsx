@@ -22,7 +22,6 @@ import Admin_profile from './Admin_pages/Admin_profile'
 import Admin_login from './Admin_pages/Admin_login'
 import LoginPage from './user_pages/Login'
 import ApRejRev from './user_pages/ApRejRev'
-
 function App() {
   return (
     <div>
@@ -57,6 +56,7 @@ function App() {
           <Route path='/admin/payment_history' element={<Payment_history/>} />
           <Route path='/admin/profile' element={<Admin_profile/>} />
           <Route path='/admin/login' element={<Admin_login/>} /> 
+
         </Routes>
       </BrowserRouter>
     </div>
