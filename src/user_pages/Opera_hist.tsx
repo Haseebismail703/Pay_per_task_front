@@ -169,7 +169,7 @@ const OperationHistory: React.FC = () => {
             key: 'action',
             render: (text: string, record: Operation) => (
                 <Button type="link" onClick={() => setIsModalVisible(true)}>
-                    Report Issue
+                    Report 
                 </Button>
             ),
         },
@@ -266,7 +266,7 @@ const OperationHistory: React.FC = () => {
 
                 {/* Report Modal */}
                 <Modal
-                    title="Report Issue"
+                    title="Report the advertiser"
                     open={isModalVisible}
                     onOk={handleReportSubmit}
                     onCancel={() => setIsModalVisible(false)}
