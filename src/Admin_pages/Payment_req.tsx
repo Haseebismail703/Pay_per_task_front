@@ -139,6 +139,7 @@ const PaymentRequestPage: React.FC = () => {
           <Table dataSource={filteredWithdrawals.length > 0 ? filteredWithdrawals : withdraw} columns={columns} pagination={false} style={{ width: '100%' }} />
         </Spin>
 
+
         <Modal
           title="Mark Payment as Paid"
           open={isWithdrawalModalVisible}
