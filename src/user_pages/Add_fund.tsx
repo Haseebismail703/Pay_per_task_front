@@ -32,7 +32,7 @@ const DepositPage: React.FC = () => {
             setLoading(true); // Disable button while loading
             try {
                 const payload = {
-                    userId: '672ba5b9dd9494d7ee962db',
+                    userId: '672ba5b9dd9494d7ee962db6',
                     amount: depositAmount,
                     paymentMethod: selectedMethod,
                     paymentType: 'Deposit',
