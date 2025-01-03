@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Card, Table, Typography, Row, Col, Spin, message } from 'antd';
+import { Card, Table, Typography, Row, Col, Spin, message,Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import Navbar from '../usercomp/user_nav';
 import api from '../api/api';
@@ -118,7 +118,8 @@ const TransactionHistory: React.FC = () => {
             render: (_, record) => {
                 const isDeposit = record.type === 'Deposit';
                 const isPending = record.status === 'pending';
-                return isPending ? (
+                const isRejected = record.status === 'reject';
+                return isPending || isRejected ? (
                     <span style={{ color: '#faad14', fontStyle: 'italic' }}>N/A</span>
                 ) : (
                     <span
@@ -139,7 +140,20 @@ const TransactionHistory: React.FC = () => {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render: (status: 'pending' | 'paid' | 'reject' | 'added') => renderStatus(status),
+            render: (status: 'pending' | 'paid' | 'reject' | 'added') => {
+                if (status === 'pending' || status === 'reject') {
+                    const tooltipText =
+                        status === 'pending'
+                            ? 'This transaction is currently under review.'
+                            : 'This transaction was rejected.';
+                    return (
+                        <Tooltip title={tooltipText}>
+                            {renderStatus(status)}
+                        </Tooltip>
+                    );
+                }
+                return renderStatus(status);
+            },
         },
         {
             title: 'Date',
@@ -166,14 +180,20 @@ const TransactionHistory: React.FC = () => {
                         }}
                     >
                         {loading ? (
-                            <Spin tip="Loading transactions..." />
+                            <>
+                            <center>
+                               <Spin size='large' /> 
+                            </center>
+                            
+                            </>
+                            
                         ) : (
                             <Table
                                 columns={columns}
                                 dataSource={transactions}
                                 pagination={{ pageSize: 5 }}
-                                scroll={{ x: true }} // Enable horizontal scrolling if needed
-                                style={{ width: '100%' }} // Ensure the table takes full width
+                                scroll={{ x: true }} 
+                                style={{ width: '100%' }}
                             />
                         )}
                     </Card>
