@@ -65,7 +65,7 @@ const UserTable: React.FC = () => {
         let status = user.status === 'active' ? 'blocked' : 'active';
         try {
             await axios.put(`${api}/blockUser/${user.id}`, { status: status });
-            message.success('User has been blocked.');
+            message.success(`User has been ${status === 'active' ? 'unblocked' : 'blocked'} successfully.`);
             fetchUsers();
         } catch (error) {
             message.error('Failed to block the user.');
@@ -188,12 +188,12 @@ const UserTable: React.FC = () => {
 
                 {/* Confirm Block Modal */}
                 <Modal
-                    title="Confirm Block User"
+                    title={`Block User: ${selectedUser?.status === 'active' ? 'Block' : 'Unblock'} ${selectedUser?.username}`}
                     open={isConfirmModalVisible}
                     onOk={() => selectedUser && handleBlockUser(selectedUser)}
                     onCancel={handleConfirmCancel}
                 >
-                    <p>Are you sure you want to block this user?</p>
+                    <p>{`Are you sure you want to ${selectedUser?.status === 'active' ? 'Block' : 'Unblock'} this user?`}</p>
                 </Modal>
             </div>
         </>
