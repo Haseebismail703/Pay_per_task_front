@@ -150,10 +150,11 @@ const UserTable: React.FC = () => {
                     onChange={(e) => setSearchText(e.target.value)}
                     style={{ marginBottom: 20, width: 300 }}
                 />
+
                 <Select
                     value={filterStatus}
                     onChange={setFilterStatus}
-                    style={{ marginBottom: 20, width: 150 }}
+                    style={{ marginBottom: 20, width: 150, marginLeft: 10}}
                 >
                     <Select.Option value="All">All Users</Select.Option>
                     <Select.Option value="active">Active Users</Select.Option>

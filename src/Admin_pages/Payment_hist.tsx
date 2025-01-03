@@ -32,7 +32,7 @@ const PaymentHistory: React.FC = () => {
           paymentType: record.paymentType,
           createdAt: record.created_at?.substring(0, 10),
           userId: record.userId,
-          amount: record.amount,
+          amount: `${record.amount}$`,
           status: record.status || 'Pending', 
         }));
         setPayments(paymentData);
@@ -84,14 +84,14 @@ const PaymentHistory: React.FC = () => {
             >
               <Select.Option value="">All</Select.Option>
               <Select.Option value="Deposit">Deposit</Select.Option>
-              <Select.Option value="Withdrawal">Withdrawal</Select.Option>
+              <Select.Option value="Withdraw">Withdraw</Select.Option>
             </Select>
           </Col>
         </Row>
         <Table
           dataSource={filteredPayments}
           loading={loading}
-          pagination={{ pageSize: 5 }}
+          pagination={{ pageSize: 10 }}
           style={{ width: '100%' }}
         >
           <Table.Column title="User Name" dataIndex="userName" key="userName" />
@@ -104,7 +104,7 @@ const PaymentHistory: React.FC = () => {
             dataIndex="status"
             key="status"
             render={(status) => (
-              <Tag color={status === 'Success' ? 'green' : status === 'Failed' ? 'red' : 'orange'}>
+              <Tag color={status === 'paid' ? 'green' : status === 'reject' ? 'red' : 'orange'}>
                 {status}
               </Tag>
             )}
