@@ -22,6 +22,7 @@ import Admin_profile from './Admin_pages/Admin_profile'
 import Admin_login from './Admin_pages/Admin_login'
 import LoginPage from './user_pages/Login'
 import ApRejRev from './user_pages/ApRejRev'
+import ReportTask from './Admin_pages/ReportTask'
 function App() {
   return (
     <div>
@@ -42,7 +43,6 @@ function App() {
           <Route path='/my-campaign' element={<Mycompaign />} />
           <Route path='/my-campaign/:id' element={<ViewStatisticsPage />} />
           <Route path='/my-campaign/:id/allApRejRevTask' element={<ApRejRev/>} />
-
           <Route path='/my_task' element={<My_task />} />
           <Route path='/add-fund' element={<Deposite />} />
       
@@ -52,6 +52,7 @@ function App() {
           <Route path='/admin/task/approved_reject' element={<Appr_rej_task/>} />
           <Route path='/admin/All_users' element={<All_user/>} />
           <Route path='/admin/task_report' element={<Task_report/>} />
+          <Route path='/admin/task_report/:taskId' element={<ReportTask/>} />
           <Route path='/admin/payment_request' element={<PaymentRequestPage/>} />
           <Route path='/admin/payment_history' element={<Payment_history/>} />
           <Route path='/admin/profile' element={<Admin_profile/>} />

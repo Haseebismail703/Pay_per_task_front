@@ -13,6 +13,7 @@ interface TaskReport {
   reportDesc: string;
   created_at: string;
   taskId: string;
+  userId : string;
 }
 
 const TaskReportPage: React.FC = () => {
@@ -34,6 +35,7 @@ const TaskReportPage: React.FC = () => {
         reportType: item.reportType,
         reportDesc: item.reportDesc,
         taskId: item.taskId,
+        userId : item.userId,
       }));
       setTaskData(taskData);
     } catch (error) {
@@ -99,7 +101,7 @@ const TaskReportPage: React.FC = () => {
             View Details
           </Button>
           <Button type="link" style={{ color: 'blue' }}>
-            <Link   to={`/admin/task_report/${task.taskId}`}>
+            <Link   to={`/admin/task_report/${task.taskId}/user/${task.userId}`}>
             Visit Task
             </Link>
           </Button>
