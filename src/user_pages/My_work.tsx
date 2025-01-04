@@ -102,7 +102,7 @@ const My_task: React.FC = () => {
                 {/* Revision Modal */}
                 <Modal
                     title={`Revision for ${selectedTask?.title}`}
-                    visible={isModalVisible}
+                    open={isModalVisible}
                     onOk={handleRevisionSubmit}
                     onCancel={() => setIsModalVisible(false)}
                 >

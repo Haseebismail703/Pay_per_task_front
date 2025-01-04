@@ -1,12 +1,16 @@
-import React from 'react'
-import Admin_navb from '../Admin_comp/Admin_navb'
-
-function Admin_dash() {
+import React from "react";
+import AdminCard from "../Admin_comp/AdminCard";
+import AdminChart from "../Admin_comp/AdminChart";
+import Admin_navb from "../Admin_comp/Admin_navb";
+const AdminDashboard: React.FC = () => {
+ 
   return (
-    <div>
-      <Admin_navb/>
-    </div>
-  )
-}
+   <>
+   <Admin_navb/>
+   <AdminCard />
+    <AdminChart/>
+   </>
+  );
+};
 
-export default Admin_dash
+export default AdminDashboard;

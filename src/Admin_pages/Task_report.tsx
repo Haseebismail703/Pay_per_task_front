@@ -101,11 +101,10 @@ const TaskReportPage: React.FC = () => {
             View Details
           </Button>
           <Button type="link" style={{ color: 'blue' }}>
-            <Link   to={`/admin/task_report/${task.taskId}/user/${task.userId}`}>
+            <Link   to={`/admin/task_report/${task.taskId}`}>
             Visit Task
             </Link>
           </Button>
-
         </>
       ),
     },
