@@ -6,7 +6,6 @@ import TaskSubmitPage from './user_pages/Task_detail'
 import Opera_hist from './user_pages/Opera_hist'
 import Mycompaign from './user_pages/Mycompaign'
 import ViewStatisticsPage from './user_pages/View_statics'
-import Dashboard from './user_pages/Dashboard'
 import Writhdrow from './user_pages/Writhdrow'
 import Deposite from './user_pages/Add_fund'
 import Trans_hist from './user_pages/Trans_hist'
@@ -29,7 +28,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Publisher */}
-          <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/all-tasks' element={<Alltask />} />
           <Route path='/all-tasks/:taskId' element={<TaskSubmitPage />} />
           <Route path='/my-work' element={<Opera_hist />} />

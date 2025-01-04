@@ -5,7 +5,6 @@ import {
     SettingOutlined,
     LogoutOutlined,
     MenuOutlined,
-    DashboardOutlined,
     CheckSquareOutlined,
     AppstoreAddOutlined,
     HistoryOutlined,
@@ -55,48 +54,43 @@ const Navbar: React.FC = () => {
     const drawerMenuItems = [
         {
             key: '1',
-            icon: <DashboardOutlined />,
-            label: <Link to="/dashboard">Dashboard</Link>,
-        },
-        {
-            key: '2',
             icon: <CheckSquareOutlined />,
             label: <Link to="/all-tasks">All Tasks</Link>,
         },
         {
-            key: '3',
+            key: '2',
             icon: <SolutionOutlined />,
             label: <Link to="/my-work">My Work</Link>,
         },
         {
-            key: '4',
+            key: '3',
             icon: <ExportOutlined />,
             label: <Link to="/withdraw">Withdraw</Link>,
         },
         {
-            key: '5',
+            key: '4',
             icon: <ProjectOutlined />,
             label: 'Advertising',
             children: [
                 {
-                    key: '5.1',
+                    key: '4.1',
                     icon: <WalletOutlined />,
                     label: <Link to="/add-fund">Add Fund</Link>,
                 },
                 {
-                    key: '5.2',
+                    key: '4.2',
                     icon: <AppstoreAddOutlined />,
                     label: <Link to="/create-campaign">Create Campaign</Link>,
                 },
                 {
-                    key: '5.3',
+                    key: '4.3',
                     icon: <AppstoreAddOutlined />,
                     label: <Link to="/my-campaign">My Campaign</Link>,
                 },
             ],
         },
         {
-            key: '6',
+            key: '5',
             icon: <HistoryOutlined />,
             label: <Link to="/transaction-history">Transaction History</Link>,
         },
