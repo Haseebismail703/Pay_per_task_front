@@ -15,7 +15,6 @@ import {
     ExportOutlined
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-
 const { Header } = Layout;
 
 const Navbar: React.FC = () => {
@@ -41,7 +40,7 @@ const Navbar: React.FC = () => {
     const profileMenuItems = [
         {
             key: 'profile',
-            label: 'Profile Settings',
+            label:<Link to={'/profile'}>Profile Settings</Link> ,
             icon: <SettingOutlined />,
         },
         {

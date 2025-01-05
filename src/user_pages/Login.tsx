@@ -78,7 +78,7 @@ const LoginPage: React.FC = () => {
               </Button>
             </Form.Item>
             <Text style={{ display: 'block', textAlign: 'center', marginTop: '16px' }}>
-              Don’t have an account? <Link href="#">Sign up</Link>
+              Don’t have an account? <Link href="/signup">Sign up</Link>
             </Text>
           </Form>
         </div>

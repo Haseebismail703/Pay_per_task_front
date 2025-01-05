@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Upload, Row, Col, Typography, Card, Image, Button, Form, Spin } from 'antd';
+import {
+  Upload,
+  Row,
+  Col,
+  Typography,
+  Card,
+  Image,
+  Button,
+  Form,
+  Spin,
+  Space,
+  message,
+} from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Navbar from '../usercomp/user_nav';
 import axios from 'axios';
 import api from '../api/api';
 import { useParams } from 'react-router-dom';
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 const TaskDetailPage: React.FC = () => {
   interface Task {
@@ -20,12 +32,13 @@ const TaskDetailPage: React.FC = () => {
   const [taskDetails, setTaskDetails] = useState<Task | null>(null);
   const [fileList, setFileList] = useState<any[]>([]);
   const [proof, setProof] = useState('');
-  const [loading, setLoading] = useState(false);  // For showing the loader during task upload
+  const [loading, setLoading] = useState(false);
   const { taskId } = useParams();
 
   const handleFileChange = (info: any) => {
     if (info.fileList.length > 3) {
-      info.fileList.shift(); // Limit to 3 files
+      message.warning('You can only upload up to 3 files.');
+      info.fileList.shift();
     }
     setFileList(info.fileList);
   };
@@ -35,53 +48,51 @@ const TaskDetailPage: React.FC = () => {
   };
 
   const handleUploadTask = async () => {
+    if (!proof || fileList.length === 0) {
+      message.error('Please upload images and provide proof before submitting.');
+      return;
+    }
+
     try {
-      setLoading(true);  // Show loader when upload starts
+      setLoading(true);
       const formData = new FormData();
 
-      // Append files to formData
       fileList.forEach((file) => {
         formData.append('file', file.originFileObj);
       });
 
-      // Append proof text
       formData.append('proof', proof);
-
-      // Append additional data
       formData.append('country', 'usa');
       formData.append('userId', '672ba5b9dd9494d7ee962db6');
       formData.append('taskId', taskId || '');
       formData.append('comment', proof);
-      formData.append('advId','672ba5b9dd9494d7ee962db6')
-      // Make a POST request
+      formData.append('advId', '672ba5b9dd9494d7ee962db6');
+
       const response = await axios.post(`${api}/submitTask`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      console.log('Upload response:', response.data);
-
-      // Reset state
+      message.success('Task submitted successfully!');
       setFileList([]);
       setProof('');
     } catch (error) {
+      message.error('Failed to upload task. Please try again.');
       console.error('Error uploading task:', error);
     } finally {
-      setLoading(false);  // Hide loader after upload
+      setLoading(false);
     }
   };
 
   const getTaskById = async () => {
     try {
-      setLoading(true);  // Show loader while fetching task details
+      setLoading(true);
       const res = await axios.get<Task>(`${api}/getTaskByuser/672f9356f4a6e888e3312b67`);
       setTaskDetails(res.data);
-      console.log(res.data);
     } catch (error) {
+      message.error('Error fetching task details.');
       console.error('Error fetching task details:', error);
     } finally {
-      setLoading(false);  // Hide loader after task details are fetched
+      setLoading(false);
     }
   };
 
@@ -92,69 +103,124 @@ const TaskDetailPage: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: '600px', width: '100%' }}>
-          <Title level={3} style={{ textAlign: 'center' }}>Task Details</Title>
+      <div style={{ padding: '40px', background: '#eef2f5', minHeight: '100vh' }}>
+        <div
+          style={{
+            maxWidth: '900px',
+            margin: 'auto',
+            background: '#fff',
+            borderRadius: '12px',
+            padding: '30px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          }}
+        >
+          <Title level={3} style={{ textAlign: 'center', marginBottom: '20px' }}>
+            Task Details
+          </Title>
 
           {loading ? (
-            <Spin size="large" style={{ display: 'block', margin: 'auto', padding: '50px' }} />
+            <Spin size="large" style={{ display: 'block', margin: '50px auto' }} />
           ) : taskDetails ? (
             <>
-              <Title level={4}>Task Details Preview:</Title>
-              <Paragraph><strong>Task Title:</strong> {taskDetails.taskTitle}</Paragraph>
-              <Paragraph><strong>Description:</strong> {taskDetails.taskDescription}</Paragraph>
-              <Paragraph><strong>Category:</strong> {taskDetails.category}</Paragraph>
-              <Paragraph><strong>Price:</strong> ${taskDetails.publisherReward || 'N/A'}</Paragraph>
-
-              <Title level={4}>Upload Images</Title>
-              <Upload
-                fileList={fileList}
-                onChange={handleFileChange}
-                beforeUpload={() => false}
-                maxCount={3}
-                multiple
+              <Card
+                style={{
+                  marginBottom: '20px',
+                  borderRadius: '10px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                }}
               >
-                <Button icon={<UploadOutlined />} style={{ marginBottom: '20px' }}>
-                  Upload Images (Max 3)
-                </Button>
-              </Upload>
+                <Title level={4}>Task Overview</Title>
+                <Paragraph>
+                  <Text strong>Task Title:</Text> {taskDetails.taskTitle}
+                </Paragraph>
+                <Paragraph>
+                  <Text strong>Description:</Text> {taskDetails.taskDescription}
+                </Paragraph>
+                <Paragraph>
+                  <Text strong>Category:</Text> {taskDetails.category}
+                </Paragraph>
+                <Paragraph>
+                  <Text strong>Price:</Text> ${taskDetails.publisherReward || 'N/A'}
+                </Paragraph>
+              </Card>
 
-              <Title level={4}>Uploaded Images:</Title>
-              <Row gutter={[16, 16]}>
-                {fileList.map((file) => (
-                  <Col xs={12} sm={8} md={6} lg={4} key={file.uid}>
-                    <Card hoverable style={{ width: '100%', borderRadius: '8px' }}>
+              <Card
+                style={{
+                  marginBottom: '20px',
+                  borderRadius: '10px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                }}
+              >
+                <Title level={4}>Upload Images</Title>
+                <Upload
+                  fileList={fileList}
+                  onChange={handleFileChange}
+                  beforeUpload={() => false}
+                  maxCount={3}
+                  multiple
+                  style={{ marginBottom: '20px' }}
+                >
+                  <Button icon={<UploadOutlined />}>Upload Images (Max 3)</Button>
+                </Upload>
+                <Row gutter={[16, 16]}>
+                  {fileList.map((file) => (
+                    <Col xs={12} sm={8} md={6} key={file.uid}>
                       <Image
                         src={URL.createObjectURL(file.originFileObj)}
                         alt={file.name}
-                        style={{ width: '100%', height: 'auto' }}
-                        preview={{ visible: false }}
+                        style={{
+                          width: '100%',
+                          borderRadius: '10px',
+                          border: '1px solid #ddd',
+                          padding: '5px',
+                        }}
+                        preview={false}
                       />
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
+                    </Col>
+                  ))}
+                </Row>
+              </Card>
 
-              <Title level={4}>Proof of Task Completion</Title>
-              <Form.Item>
-                <textarea
-                  value={proof}
-                  onChange={handleProofChange}
-                  placeholder="Enter proof of task completion..."
-                  style={{ width: '100%', height: '100px', borderRadius: '4px', padding: '10px', border: '1px solid #d9d9d9' }}
-                />
-              </Form.Item>
-
-              <Button
-                type="primary"
-                onClick={handleUploadTask}
-                style={{ width: '100%', marginTop: '20px' }}
+              <Card
+                style={{
+                  borderRadius: '10px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                }}
               >
-                Upload Task
-              </Button>
+                <Title level={4}>Proof of Task Completion</Title>
+                <Form.Item style={{ marginBottom: '20px' }}>
+                  <textarea
+                    value={proof}
+                    onChange={handleProofChange}
+                    placeholder="Enter proof of task completion..."
+                    style={{
+                      width: '100%',
+                      height: '120px',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      border: '1px solid #d9d9d9',
+                    }}
+                  />
+                </Form.Item>
+                <Button
+                  type="primary"
+                  onClick={handleUploadTask}
+                  style={{
+                    width: '100%',
+                    height: '50px',
+                    fontSize: '16px',
+                    borderRadius: '6px',
+                  }}
+                  loading={loading}
+                >
+                  Submit Task
+                </Button>
+              </Card>
             </>
           ) : (
-            <Title level={4} style={{ textAlign: 'center' }}>Loading task details...</Title>
+            <Title level={4} style={{ textAlign: 'center' }}>
+              Loading task details...
+            </Title>
           )}
         </div>
       </div>

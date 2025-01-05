@@ -22,6 +22,7 @@ import Admin_login from './Admin_pages/Admin_login'
 import LoginPage from './user_pages/Login'
 import ApRejRev from './user_pages/ApRejRev'
 import ReportTask from './Admin_pages/ReportTask'
+import SignUpForm from './user_pages/Signup'
 function App() {
   return (
     <div>
@@ -35,6 +36,7 @@ function App() {
           <Route path='/transaction-history' element={<Trans_hist />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/login' element={<LoginPage/>} />
+          <Route path='/signup' element={<SignUpForm/>} />
 
           {/* advertiser */}
           <Route path='/create-campaign' element={<CreateTask />} />
@@ -55,7 +57,6 @@ function App() {
           <Route path='/admin/payment_history' element={<Payment_history/>} />
           <Route path='/admin/profile' element={<Admin_profile/>} />
           <Route path='/admin/login' element={<Admin_login/>} /> 
-
         </Routes>
       </BrowserRouter>
     </div>
