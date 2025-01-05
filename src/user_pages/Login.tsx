@@ -1,10 +1,46 @@
-import React from 'react';
-import { Form, Input, Button, Typography, Row, Col,Checkbox } from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, Button, Typography, Row, Col, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate
+import axios from 'axios';
+import api from '../api/api'; // Import your API URL
 
-const { Title, Text, Link } = Typography;
+const { Title, Text } = Typography;
 
 const LoginPage: React.FC = () => {
+  const [loading, setLoading] = useState(false); // to handle button loading state
+  const navigate = useNavigate(); // Hook to navigate after successful login
+
+  const onFinish = async (values: any) => {
+    setLoading(true); // Set loading to true when submitting
+
+    try {
+      // Make a POST request to your login API
+      const response = await axios.post(`${api}/signinUser`, {
+        email: values.email,
+        password: values.password,
+      });
+      // Check if login is successful
+      if (response.data?.message === 'Login successful') {
+        // Save the user data or token in localStorage
+        localStorage.setItem('user', JSON.stringify(response.data));
+        // Navigate to the dashboard after successful login
+        navigate('/all-tasks');
+      } else {
+        message.error('Invalid email or password');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      if (axios.isAxiosError(error)) {
+        message.error(error.response?.data?.message || 'Login failed');
+      } else {
+        message.error('Login failed');
+      }
+    } finally {
+      setLoading(false); // Set loading to false after the request completes
+    }
+  };
+
   return (
     <Row style={{ minHeight: '100vh' }}>
       {/* Left Side - Image */}
@@ -37,18 +73,19 @@ const LoginPage: React.FC = () => {
 
           <Form
             name="login_form"
+            onFinish={onFinish}
             initialValues={{ remember: true }}
             layout="vertical"
             style={{ width: '100%' }}
           >
             <Form.Item
-              name="username"
-              label="Username or Email"
-              rules={[{ required: true, message: 'Please enter your username or email!' }]}
+              name="email"
+              label="Email"
+              rules={[{ required: true, message: 'Please enter your email!' }]}
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder="Username or email"
+                placeholder="Email"
               />
             </Form.Item>
 
@@ -64,21 +101,23 @@ const LoginPage: React.FC = () => {
             </Form.Item>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
-              <Link href="#" style={{ color: '#1890ff' }}>
+              <Link to="#" style={{ color: '#1890ff' }}>
                 Forgot password?
               </Link>
             </div>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" block>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                loading={loading} // Show loading state when submitting
+              >
                 Login
               </Button>
             </Form.Item>
             <Text style={{ display: 'block', textAlign: 'center', marginTop: '16px' }}>
-              Don’t have an account? <Link href="/signup">Sign up</Link>
+              Don’t have an account? <Link to="/signup">Sign up</Link>
             </Text>
           </Form>
         </div>

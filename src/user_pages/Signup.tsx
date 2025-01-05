@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Button, Checkbox, Col, Row, Card } from 'antd';
+import { Form, Input, Button, Col, Row, Card,message } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import { Link,useNavigate} from 'react-router-dom';
+import axios from 'axios';
+import api from '../api/api';
 
 const images = [
   'https://picsum.photos/800/800?random',
@@ -10,7 +13,7 @@ const images = [
 
 const SignUpForm = () => {
   const [currentImage, setCurrentImage] = useState(0);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prevImage) => (prevImage + 1) % images.length);
@@ -25,9 +28,22 @@ const SignUpForm = () => {
     return () => clearInterval(interval); // Cleanup the interval on unmount
   }, [currentImage]);
 
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
-  };
+const onFinish = async (values: any) => {
+    try {
+        const response = await axios.post(`${api}/signupUser`, {
+            username: values.username,
+            email: values.email,
+            password: values.password,
+            role: 'user'
+        });
+        navigate('/login');
+        message.success('User signed up successfully');
+        console.log('User signed up successfully:', response.data);
+    } catch (error) {
+        message.error('Error during sign up');
+        console.error('Error during sign up:', error);
+    }
+};
 
   return (
     <Row justify="center" align="middle" style={{ minHeight: '97vh', backgroundColor: 'rgba(240, 242, 245, 0.8)' }}>
@@ -87,10 +103,6 @@ const SignUpForm = () => {
               />
             </Form.Item>
 
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
-
             <Form.Item style={{ textAlign: 'center' }}>
               <Button
                 type="primary"
@@ -107,7 +119,7 @@ const SignUpForm = () => {
             </Form.Item>
 
             <Form.Item style={{ textAlign: 'center' }}>
-              Already have an account? <a href="/login">Log In</a>
+              Already have an account? <Link to="/login">Log In</Link>
             </Form.Item>
           </Form>
         </Card>
