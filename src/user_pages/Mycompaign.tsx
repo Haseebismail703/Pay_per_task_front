@@ -22,9 +22,9 @@ const Mycompaign: React.FC = () => {
     // Fetch tasks data from API
     useEffect(() => {
         const fetchTasks = async () => {
-            const adid = '1234'; // Adjusted adid to a regular string
+            let user = JSON.parse(localStorage.getItem('user') || '{}');
             try {
-                const response = await axios.get<Task[]>(`${api}/getTaskbyId/${adid}`);
+                const response = await axios.get<Task[]>(`${api}/getTaskbyId/${user?.user_data.id}`);
                 setTasks(response.data);
                 console.log(response.data);
             } catch (error) {

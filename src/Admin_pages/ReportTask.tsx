@@ -54,7 +54,7 @@ const ReportTask: React.FC = () => {
                     country: item.country,
                     publisherReward: `${item.publisherReward}$`,
                     imgurl: item.imgurl?.map((imgObj: any) => imgObj.image_url) || [],
-                    taskName: response.data?.getTask?.taskTitle || "N/A",
+                    taskName: item.taskName || "N/A",
                     comment: item.comment || "",
                     userId: item.userId,
                 }));

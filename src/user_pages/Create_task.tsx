@@ -59,10 +59,11 @@ const CreateTask: React.FC = () => {
         }
 
         try {
+            let user = JSON.parse(localStorage.getItem('user') || '{}');
             const response = await axios.post(`${api}/createTask`, {
                 ...values,
                 totalPriceWithoutFee,
-                advertiserId: '1234',
+                advertiserId: user?.user_data.id || '',
             });
 
             if (response.status === 200) {

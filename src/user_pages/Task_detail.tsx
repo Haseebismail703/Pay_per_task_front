@@ -27,6 +27,7 @@ const TaskDetailPage: React.FC = () => {
     category: string;
     publisherReward: number;
     targetCountries: string[];
+    advertiserId: string;
   }
 
   const [taskDetails, setTaskDetails] = useState<Task | null>(null);
@@ -60,18 +61,19 @@ const TaskDetailPage: React.FC = () => {
       fileList.forEach((file) => {
         formData.append('file', file.originFileObj);
       });
-
+     let user = JSON.parse(localStorage.getItem('user') || '{}');
       formData.append('proof', proof);
       formData.append('country', 'usa');
-      formData.append('userId', '672ba5b9dd9494d7ee962db6');
+      formData.append('userId', user?.user_data.id);
       formData.append('taskId', taskId || '');
       formData.append('comment', proof);
-      formData.append('advId', '672ba5b9dd9494d7ee962db6');
+      if (taskDetails?.advertiserId) {
+        formData.append('advId', taskDetails.advertiserId);
+      }
 
       const response = await axios.post(`${api}/submitTask`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-
       message.success('Task submitted successfully!');
       setFileList([]);
       setProof('');
@@ -86,7 +88,7 @@ const TaskDetailPage: React.FC = () => {
   const getTaskById = async () => {
     try {
       setLoading(true);
-      const res = await axios.get<Task>(`${api}/getTaskByuser/672f9356f4a6e888e3312b67`);
+      const res = await axios.get<Task>(`${api}/getTaskByuser/${taskId}`);
       setTaskDetails(res.data);
     } catch (error) {
       message.error('Error fetching task details.');

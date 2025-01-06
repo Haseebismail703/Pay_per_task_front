@@ -30,8 +30,9 @@ const OperationHistory: React.FC = () => {
     useEffect(() => {
         // Fetch data from API
         const fetchData = async () => {
+            let user = JSON.parse(localStorage.getItem('user') || '{}');
             try {
-                const response = await axios.get(`${api}/myWork/672ba5b9dd9494d7ee962db`);
+                const response = await axios.get(`${api}/myWork/${user?.user_data.id}`);
                 const { approved, reject, revision, pending } = response.data;
                 console.log(response.data);
 
@@ -85,11 +86,12 @@ const OperationHistory: React.FC = () => {
     }, []);
 
     const handleReportSubmit = async () => {
-        console.log(currentTaskId)
+        // console.log(currentTaskId)
+        let user = JSON.parse(localStorage.getItem('user') || '{}');
         if (!currentTaskId) return;
         try {
             await axios.post(`${api}/reportTask`, {
-                userId: '672ba5b9dd9494d7ee962db6',
+                userId: user?.user_data.id,
                 taskId: currentTaskId,
                 reportType: reportType,
                 reportDesc: reportText,
@@ -127,15 +129,6 @@ const OperationHistory: React.FC = () => {
             dataIndex: 'publisherReward',
             key: 'publisherReward',
             render: (reward: number) => `$${reward}`,
-        },
-        {
-            title: 'Action',
-            key: 'action',
-            render: (text: string, record: Operation) => (
-                <Button type="primary" onClick={() => handleCompleteAgain(record.id)}>
-                    Complete Again
-                </Button>
-            ),
         },
     ];
 
