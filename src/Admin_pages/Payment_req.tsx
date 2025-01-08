@@ -13,6 +13,7 @@ interface PaymentRecord {
   amount: number;
   paymentMethod: string;
   TID: string;
+  userId : string;
 }
 
 const PaymentRequestPage: React.FC = () => {
@@ -42,6 +43,7 @@ const PaymentRequestPage: React.FC = () => {
         paymentMethod: item.paymentMethod,
         createdAt: item.created_at?.substring(0, 10),
         amount: `${item.amount}$`,
+        userId : item.userId,
         TID: item.TID || 'N/A',
       }));
       setDeposit(depositData);
@@ -116,9 +118,9 @@ const PaymentRequestPage: React.FC = () => {
 
   const handleAddFunds = async () => {
     if (!selectedRecord) return;
-    console.log(fundAmount)
     try {
-      const payload = { amount: fundAmount, status: 'added', rejectReason: 'N/A' };
+      const payload = { amount: Number(fundAmount), status: 'added', rejectReason: 'N/A', userId: selectedRecord.userId };
+      console.log(payload,selectedRecord)
       await axios.put(`${api}/paidWithdrow/${selectedRecord.id}`, payload);
       message.success('Funds added successfully');
       setIsAddFundsModalVisible(false);
@@ -130,6 +132,11 @@ const PaymentRequestPage: React.FC = () => {
   };
 
   const columns = [
+    {
+      title: 'id',
+      dataIndex: 'userId',
+      key: 'userId',
+    },
     {
       title: 'User Name',
       dataIndex: 'userName',
@@ -180,6 +187,11 @@ const PaymentRequestPage: React.FC = () => {
   ];
 
   const Withdrowcolumns = [
+    {
+      title: 'id',
+      dataIndex: 'userId',
+      key: 'userId',
+    },
     {
       title: 'User Name',
       dataIndex: 'userName',

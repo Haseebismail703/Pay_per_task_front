@@ -1,157 +1,182 @@
-import React, { useState } from 'react';
-import { Card, Col, Row, Avatar, Typography, Button, Input, Form, Upload, Divider, Space, List } from 'antd';
-import { MailOutlined, PhoneOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { Card, Row, Col, Avatar, Progress, Typography, Button, Modal, Form, Input, Upload, message } from 'antd';
+import { DollarCircleOutlined, ProfileOutlined, HourglassOutlined, UploadOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import api from '../api/api';
 import Admin_navb from '../Admin_comp/Admin_navb';
 
 const { Title, Text } = Typography;
 
-const AdminProfile: React.FC = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [form] = Form.useForm();
+interface User {
+  username: string;
+  email: string;
+  profileurl: string;
+  totalEarnings: number;
+  completedTasks: number;
+  pendingTasks: number;
+  progress: number;
+}
 
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
+const UserProfile: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form] = Form.useForm();
+  const [fileList, setFileList] = useState<any[]>([]);
+  const [userDetails, setUserDetails] = useState<User>({
+    username: '',
+    email: '',
+    profileurl: '',
+    totalEarnings: 0,
+    completedTasks: 0,
+    pendingTasks: 0,
+    progress: 0,
+  });
+
+  const fetchUserData = async () => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    try {
+      const response = await axios.get(`${api}/userProfile/${user?.user_data.id}`);
+      setUserDetails(response.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
   };
 
-  const recentActivities = [
-    'Created a new task for Class 10 Science',
-    'Reviewed submissions for Math Assignment',
-    'Updated quiz for English Grammar',
-    'Added new students to Class 12',
-    'Deleted an outdated task',
-  ];
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
-  const tasksOverview = [
-    { title: 'Total Tasks Created', value: 25 },
-    { title: 'Pending Tasks', value: 8 },
-    { title: 'Reviewed Tasks', value: 17 },
-    { title: 'Classes Managed', value: 4 },
-  ];
+  const handleEditProfile = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleFormSubmit = async (values: any) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const formData = new FormData();
+      formData.append('username', values.name);
+
+      if (fileList.length > 0) {
+        formData.append('file', fileList[0].originFileObj);
+      }
+      const response = await axios.put(`${api}/profileUpdate/${user?.user_data.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setUserDetails({
+        ...userDetails,
+        username: response.data.username,
+        profileurl: response.data.profileurl,
+      });
+      fetchUserData();
+      message.success('Profile updated successfully!');
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      message.error('Failed to update profile.');
+    }
+  };
 
   return (
     <>
       <Admin_navb />
-      <div style={{ padding: '20px' }}>
-        <Row gutter={[16, 16]}>
-          {/* Profile Card */}
-          <Col xs={24} sm={24} md={8}>
-            <Card style={{ textAlign: 'center' }}>
-              <Upload
-                name="avatar"
-                listType="picture-card"
-                showUploadList={false}
-                beforeUpload={() => false} // Prevents automatic upload; replace with custom upload function if needed
-              >
-                <Avatar size={120} src="https://via.placeholder.com/120" />
-                <div>
-                  <Button icon={<UploadOutlined />}>Change Avatar</Button>
-                </div>
-              </Upload>
-              <Divider />
-              <Form form={form} layout="vertical" initialValues={{ name: 'John Doe', location: 'Bay Area, San Francisco, CA' }}>
-                <Form.Item label="Full Name" name="name">
-                  <Input disabled={!isEditing} />
-                </Form.Item>
-                <Form.Item label="Location" name="location">
-                  <Input disabled={!isEditing} />
-                </Form.Item>
-                <Space>
-                  {isEditing ? (
-                    <>
-                      <Button type="primary" onClick={toggleEdit}>Save</Button>
-                      <Button onClick={toggleEdit}>Cancel</Button>
-                    </>
-                  ) : (
-                    <Button icon={<EditOutlined />} onClick={toggleEdit}>Edit Profile</Button>
-                  )}
-                </Space>
-              </Form>
+      <div style={{ padding: '20px', maxWidth: '1200px', margin: 'auto' }}>
+        {/* Header Section */}
+        <Card style={{ marginBottom: '20px', textAlign: 'center' }}>
+          <Avatar
+            size={100}
+            src={userDetails.profileurl || <ProfileOutlined />}
+            style={{ marginBottom: '10px' }}
+          />
+          <Title level={3}>{userDetails.username}</Title>
+          <Text type="secondary">{userDetails.email}</Text>
+          <div style={{ marginTop: '10px' }}>
+            <Button type="primary" onClick={handleEditProfile} style={{ marginTop: '10px' }}>
+              Edit Profile
+            </Button>
+          </div>
+        </Card>
+
+        {/* Statistics Section */}
+        <Row gutter={16} justify="center">
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Card bordered={false}>
+              <Row>
+                <Col span={8}><DollarCircleOutlined style={{ fontSize: '30px', color: '#52c41a' }} /></Col>
+                <Col span={16}>
+                  <Title level={4}>Total Earnings</Title>
+                  <Text>{userDetails.totalEarnings}</Text>
+                </Col>
+              </Row>
             </Card>
           </Col>
-
-          {/* Information Card */}
-          <Col xs={24} sm={24} md={16}>
-            <Card>
-              <Title level={4}>Contact Information</Title>
-              <Form
-                form={form}
-                layout="vertical"
-                initialValues={{
-                  email: 'fip@jukmuh.al',
-                  phone: '(239) 816-9029',
-                  mobile: '(320) 380-4539',
-                  address: 'Bay Area, San Francisco, CA',
-                }}
-              >
-                <Row gutter={[16, 16]}>
-                  <Col span={12}>
-                    <Form.Item label="Email" name="email">
-                      <Input disabled={!isEditing} prefix={<MailOutlined />} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="Phone" name="phone">
-                      <Input disabled={!isEditing} prefix={<PhoneOutlined />} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item label="Mobile" name="mobile">
-                      <Input disabled={!isEditing} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Form.Item label="Address" name="address">
-                      <Input disabled={!isEditing} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                {isEditing && (
-                  <Space>
-                    <Button type="primary" onClick={toggleEdit}>Save</Button>
-                    <Button onClick={toggleEdit}>Cancel</Button>
-                  </Space>
-                )}
-              </Form>
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Card bordered={false}>
+              <Row>
+                <Col span={8}><HourglassOutlined style={{ fontSize: '30px', color: '#fa8c16' }} /></Col>
+                <Col span={16}>
+                  <Title level={4}>Pending Tasks</Title>
+                  <Text>{userDetails.pendingTasks}</Text>
+                </Col>
+              </Row>
             </Card>
           </Col>
-
-          {/* Tasks Overview */}
-          <Col xs={24} sm={24} md={12}>
-            <Card>
-              <Title level={5} style={{ color: '#1890ff' }}>Tasks Overview</Title>
-              <List
-                itemLayout="horizontal"
-                dataSource={tasksOverview}
-                renderItem={(item) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={<Text strong>{item.title}</Text>}
-                      description={<Text>{item.value}</Text>}
-                    />
-                  </List.Item>
-                )}
-              />
-            </Card>
-          </Col>
-
-          {/* Recent Activities */}
-          <Col xs={24} sm={24} md={12}>
-            <Card>
-              <Title level={5} style={{ color: '#1890ff' }}>Recent Activities</Title>
-              <List
-                dataSource={recentActivities}
-                renderItem={(item) => (
-                  <List.Item>
-                    <Text>{item}</Text>
-                  </List.Item>
-                )}
-              />
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Card bordered={false}>
+              <Row>
+                <Col span={8}><ProfileOutlined style={{ fontSize: '30px', color: '#1890ff' }} /></Col>
+                <Col span={16}>
+                  <Title level={4}>Completed Tasks</Title>
+                  <Text>{userDetails.completedTasks}</Text>
+                </Col>
+              </Row>
             </Card>
           </Col>
         </Row>
+
+        {/* Profile Progress Section */}
+        <Card title="Profile Completion" bordered={false} style={{ marginTop: '20px' }}>
+          <Progress percent={userDetails.progress} size="small" />
+        </Card>
+
+        {/* Edit Profile Modal */}
+        <Modal
+          title="Edit Profile"
+          open={isModalOpen}
+          onCancel={handleCancel}
+          onOk={() => form.submit()}
+          okText="Save"
+          cancelText="Cancel"
+        >
+          <Form form={form} layout="vertical" onFinish={handleFormSubmit} initialValues={{ name: userDetails.username }}>
+            <Form.Item
+              label="Username"
+              name="name"
+              rules={[{ required: true, message: 'Please enter your name!' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item label="Profile Picture" name="avatar">
+              <Upload
+                maxCount={1}
+                fileList={fileList}
+                onChange={({ fileList }) => setFileList(fileList)}
+                beforeUpload={() => false}
+                listType="picture"
+              >
+                <Button icon={<UploadOutlined />}>Upload</Button>
+              </Upload>
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
     </>
   );
 };
 
-export default AdminProfile;
+export default UserProfile;

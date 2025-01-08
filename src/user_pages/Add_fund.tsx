@@ -30,9 +30,10 @@ const DepositPage: React.FC = () => {
     const handleDeposit = async () => {
         if (depositAmount && depositAmount > 0 && selectedMethod && TID) {
             setLoading(true); // Disable button while loading
+            let user = JSON.parse(localStorage.getItem('user') || '{}');
             try {
                 const payload = {
-                    userId: '672ba5b9dd9494d7ee962db6',
+                    userId: user?.user_data.id,
                     amount: depositAmount,
                     paymentMethod: selectedMethod,
                     paymentType: 'Deposit',

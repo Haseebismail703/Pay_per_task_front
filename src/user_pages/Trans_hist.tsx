@@ -17,6 +17,7 @@ interface PaymentRecord {
     amount: number;
     status: string; // pending, paid, reject, added;
     rejectReason: string;
+    paymentMethod : string;
 }
 
 const TransactionHistory: React.FC = () => {
@@ -25,15 +26,17 @@ const TransactionHistory: React.FC = () => {
 
     const fetchTransactions = async () => {
         setLoading(true);
+        let user = JSON.parse(localStorage.getItem('user') || '{}');
         try {
-            const response = await axios.get(`${api}/getPaymentHistory/672ba5b9dd9494d7ee962db6`);
+            const response = await axios.get(`${api}/getPaymentHistory/${user?.user_data.id}`);
             const data = response.data.map((transaction: any, index: number) => ({
                 key: index + 1,
-                TID: transaction.TID,
+                TID: transaction.TID || 'N/A',
                 type: transaction.paymentType,
                 amount: `${transaction.amount}$`,
                 status: transaction.status,
                 date: transaction.created_at?.substring(0, 10),
+                paymentMethod : transaction.paymentMethod 
             }));
             setTransactions(data);
             setLoading(false);
@@ -109,6 +112,25 @@ const TransactionHistory: React.FC = () => {
                 >
                     {type}
                 </span>
+            ),
+        },
+        {
+            title: 'paymentMethod',
+            dataIndex: 'paymentMethod',
+            key: 'paymentMethod',
+            align: 'center',
+            render: (text) => (
+                <strong
+                    style={{
+                        color: text === 'payeer' ? 'rgb(33, 150, 243)' : 'rgb(244, 67, 54)',
+                        backgroundColor: text === 'payeer' ? 'rgb(227, 242, 253)' : 'rgb(255, 235, 238)',
+                        borderRadius: 8,
+                        fontWeight: 'bold',
+                        padding: '4px 8px',
+                    }}
+                >
+                    {text}
+                </strong>
             ),
         },
         {
