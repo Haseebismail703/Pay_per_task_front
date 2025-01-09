@@ -1,22 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Typography, Radio, Space, Button, Row, Col, Divider, Input, Image, message } from 'antd';
 import { DollarCircleOutlined } from '@ant-design/icons';
 import Navbar from '../usercomp/user_nav';
 import axios from 'axios';
 import api from '../api/api';
-
 const { Title, Text } = Typography;
-
+interface User {
+    id: number;
+    earning: string;
+    advBalance: string;
+}
 const WithdrawPage: React.FC = () => {
     const [selectedMethod, setSelectedMethod] = useState<'payeer' | 'perfectMoney' | null>(null);
     const [payoutAmount, setPayoutAmount] = useState<number | null>(null);
+    const [userData, setUserData] = useState<User>()
 
     const availableBalance = 50; // Example balance
     const minimumWithdrawals = {
         payeer: 2,
         perfectMoney: 3,
     };
-
+    let getUser = async () => {
+        let user = JSON.parse(localStorage.getItem('user') || '{}');
+        let response = await axios.get<User>(`${api}/getUserByid/${user.user_data?.id}`)
+        setUserData(response.data)
+        console.log(response.data)
+    }
+    useEffect(() => {
+        getUser()
+    }, [])
     // Handle payout method change
     const handleMethodChange = (e: any) => {
         const method = e.target.value;
@@ -32,37 +44,49 @@ const WithdrawPage: React.FC = () => {
     };
 
     // Handle withdraw action
-    const handleWithdraw = async () => {
-        if (
-            payoutAmount &&
-            payoutAmount <= availableBalance &&
-            selectedMethod &&
-            payoutAmount >= minimumWithdrawals[selectedMethod]
-        ) {
-            let user = JSON.parse(localStorage.getItem('user') || '{}');
-            try {
-                const response = await axios.post(`${api}/payment`, {
-                    userId : user.user_data?.id,
-                    paymentMethod: selectedMethod,
-                    paymentType: 'Withdraw',
-                    amount: payoutAmount,
-                });
+ const handleWithdraw = async () => {
+    if (!userData) {
+        message.error('User data is not available.');
+        return;
+    }
 
-                if (response.status === 200) {
-                    message.success(`Successfully withdrew $${payoutAmount} via ${selectedMethod}`);
-                    setPayoutAmount(null);
-                    setSelectedMethod(null);
-                } else {
-                    message.error('Withdrawal failed. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error processing withdrawal:', error);
-                message.error('An error occurred. Please try again.');
-            }
-        } else {
-            message.error('Invalid withdrawal amount or method.');
+    if (
+        payoutAmount &&
+        payoutAmount <= availableBalance &&
+        selectedMethod &&
+        payoutAmount >= minimumWithdrawals[selectedMethod]
+    ) {
+        // Check if user's earning is greater than or equal to the payout amount
+        if (parseFloat(userData.earning) < payoutAmount) {
+            message.error('Insufficient earnings. Payout amount exceeds available earnings.');
+            return;
         }
-    };
+
+        let user = JSON.parse(localStorage.getItem('user') || '{}');
+        try {
+            const response = await axios.post(`${api}/payment`, {
+                userId: user.user_data?.id,
+                paymentMethod: selectedMethod,
+                paymentType: 'Withdraw',
+                amount: payoutAmount,
+            });
+
+            if (response.status === 200) {
+                message.success(`Successfully withdrew $${payoutAmount} via ${selectedMethod}`);
+                setPayoutAmount(null);
+                setSelectedMethod(null);
+            } else {
+                message.error('Withdrawal failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error processing withdrawal:', error);
+            message.error('An error occurred. Please try again.');
+        }
+    } else {
+        message.error('Invalid withdrawal amount or method.');
+    }
+};
+
 
     return (
         <>
