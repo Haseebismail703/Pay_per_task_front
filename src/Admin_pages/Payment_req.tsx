@@ -15,7 +15,10 @@ interface PaymentRecord {
   TID: string;
   userId : string;
 }
-
+interface User {
+  earning : string;
+  advBalance : string;
+}
 const PaymentRequestPage: React.FC = () => {
   const [isTIDModalVisible, setIsTIDModalVisible] = useState(false);
   const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
@@ -27,7 +30,7 @@ const PaymentRequestPage: React.FC = () => {
   const [withdraw, setWithdraw] = useState<PaymentRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [fundAmount, setFundAmount] = useState(''); // New state to handle fund amount input
-
+  const [user,setUser] = useState<User>()
  
 
 
@@ -57,6 +60,7 @@ const PaymentRequestPage: React.FC = () => {
         createdAt: item.created_at?.substring(0, 10),
         amount: `${item.amount}$`,
         TID: item.TID || 'N/A',
+        userId : item.userId,
       }));
       setWithdraw(withdrawData);
     } catch (error) {

@@ -39,9 +39,10 @@ const WithdrawPage: React.FC = () => {
             selectedMethod &&
             payoutAmount >= minimumWithdrawals[selectedMethod]
         ) {
+            let user = JSON.parse(localStorage.getItem('user') || '{}');
             try {
                 const response = await axios.post(`${api}/payment`, {
-                    userId : '672ba5b9dd9494d7ee962db6',
+                    userId : user.user_data?.id,
                     paymentMethod: selectedMethod,
                     paymentType: 'Withdraw',
                     amount: payoutAmount,
