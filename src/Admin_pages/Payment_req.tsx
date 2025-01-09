@@ -13,11 +13,11 @@ interface PaymentRecord {
   amount: number;
   paymentMethod: string;
   TID: string;
-  userId : string;
+  userId: string;
 }
 interface User {
-  earning : string;
-  advBalance : string;
+  earning: string;
+  advBalance: string;
 }
 const PaymentRequestPage: React.FC = () => {
   const [isTIDModalVisible, setIsTIDModalVisible] = useState(false);
@@ -30,8 +30,8 @@ const PaymentRequestPage: React.FC = () => {
   const [withdraw, setWithdraw] = useState<PaymentRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [fundAmount, setFundAmount] = useState(''); // New state to handle fund amount input
-  const [user,setUser] = useState<User>()
- 
+  const [user, setUser] = useState<User>()
+
 
 
   const fetchData = async () => {
@@ -45,8 +45,8 @@ const PaymentRequestPage: React.FC = () => {
         paymentType: item.paymentType,
         paymentMethod: item.paymentMethod,
         createdAt: item.created_at?.substring(0, 10),
-        amount: `${item.amount}$`,
-        userId : item.userId,
+        amount: `${item.amount}`,
+        userId: item.userId,
         TID: item.TID || 'N/A',
       }));
       setDeposit(depositData);
@@ -58,9 +58,9 @@ const PaymentRequestPage: React.FC = () => {
         paymentType: item.paymentType,
         paymentMethod: item.paymentMethod,
         createdAt: item.created_at?.substring(0, 10),
-        amount: `${item.amount}$`,
+        amount: `${item.amount}`,
         TID: item.TID || 'N/A',
-        userId : item.userId,
+        userId: item.userId,
       }));
       setWithdraw(withdrawData);
     } catch (error) {
@@ -81,6 +81,7 @@ const PaymentRequestPage: React.FC = () => {
   };
 
   const handleOpenRejectModal = (record: PaymentRecord) => {
+    console.log(record)
     setSelectedRecord(record);
     setRejectReason('');
     setIsRejectModalVisible(true);
@@ -94,8 +95,9 @@ const PaymentRequestPage: React.FC = () => {
 
   const handleUpdateTID = async () => {
     if (!selectedRecord) return;
+    console.log(selectedRecord)
     try {
-      const payload = { TID: newTID, status: 'paid', rejectReason: rejectReason || 'N/A' };
+      const payload = { TID: newTID, status: 'paid', amount: Number(selectedRecord.amount), rejectReason: rejectReason || 'N/A', userId: selectedRecord.userId };
       await axios.put(`${api}/paidWithdrow/${selectedRecord.id}`, payload);
       message.success('TID and status updated successfully');
       setIsTIDModalVisible(false);
@@ -109,7 +111,7 @@ const PaymentRequestPage: React.FC = () => {
   const handleRejectPayment = async () => {
     if (!selectedRecord) return;
     try {
-      const payload = { TID: newTID, status: 'reject', rejectReason: rejectReason || 'N/A' };
+      const payload = { TID: newTID, status: 'reject', amount: Number(fundAmount), rejectReason: rejectReason || 'N/A', userId: selectedRecord.userId };
       await axios.put(`${api}/paidWithdrow/${selectedRecord.id}`, payload);
       message.success('Payment request rejected successfully');
       setIsRejectModalVisible(false);
@@ -124,7 +126,7 @@ const PaymentRequestPage: React.FC = () => {
     if (!selectedRecord) return;
     try {
       const payload = { amount: Number(fundAmount), status: 'added', rejectReason: 'N/A', userId: selectedRecord.userId };
-      console.log(payload,selectedRecord)
+      console.log(payload, selectedRecord)
       await axios.put(`${api}/paidWithdrow/${selectedRecord.id}`, payload);
       message.success('Funds added successfully');
       setIsAddFundsModalVisible(false);
@@ -152,7 +154,7 @@ const PaymentRequestPage: React.FC = () => {
       key: 'paymentType',
     },
     {
-      title: 'Amount',
+      title: 'Amount($)',
       dataIndex: 'amount',
       key: 'amount',
     },
@@ -207,7 +209,7 @@ const PaymentRequestPage: React.FC = () => {
       key: 'paymentType',
     },
     {
-      title: 'Amount',
+      title: 'Amount($)',
       dataIndex: 'amount',
       key: 'amount',
     },
@@ -251,12 +253,12 @@ const PaymentRequestPage: React.FC = () => {
       <div style={{ padding: '20px' }}>
         <h2>Withdrawals</h2>
         <Spin spinning={loading}>
-          <Table scroll={{"x":"100"}} dataSource={withdraw} columns={columns} pagination={false} style={{ width: '100%' }} />
+          <Table scroll={{ "x": "100" }} dataSource={withdraw} columns={columns} pagination={false} style={{ width: '100%' }} />
         </Spin>
 
         <h2>Deposits</h2>
         <Spin spinning={loading}>
-          <Table scroll={{"x":"100"}} dataSource={deposit} columns={Withdrowcolumns} pagination={false} style={{ width: '100%' }} />
+          <Table scroll={{ "x": "100" }} dataSource={deposit} columns={Withdrowcolumns} pagination={false} style={{ width: '100%' }} />
         </Spin>
 
         {/* Modal for Add Fund */}
