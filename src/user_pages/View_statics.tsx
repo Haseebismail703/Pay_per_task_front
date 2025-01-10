@@ -69,12 +69,14 @@ const ViewStatics: React.FC = () => {
     }, [id]);
 
     const UpdateTaskProf = async (status: string, record: TableData) => {
+        console.log(record)
         try {
             await axios.put(`${api}/UpdateTaskProf`, {
                 userId: record.userId,
                 taskId: record.taskId,
                 status,
                 ...(status === "reject" || status === "revision" ? { revisionComments: reason } : {}),
+                publisherReward : record.publisherReward 
             });
             fetchData()
             message.success(`${status} action applied successfully.`);

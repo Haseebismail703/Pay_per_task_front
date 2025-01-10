@@ -14,6 +14,7 @@ interface Task {
     publisherReward: number;
     status: string;
     active: boolean;
+    taskProof : Number
 }
 
 const Mycompaign: React.FC = () => {
@@ -86,6 +87,23 @@ const Mycompaign: React.FC = () => {
             key: 'workersNeeded',
         },
         {
+            title: 'Submit Proof',
+            dataIndex: 'taskProof',
+            key: 'taskProof',
+        },
+        {
+            title: 'Remaining Workers',
+            key: 'remainingWorkers',
+            render: (_: any, record: Task) => {
+                const remainingWorkers = record.workersNeeded - (Number(record.taskProof) || 0);
+                return (
+                    <Tag color={remainingWorkers > 0 ? 'blue' : 'green'}>
+                        {remainingWorkers > 0 ? remainingWorkers : 'Completed'}
+                    </Tag>
+                );
+            },
+        },
+        {
             title: 'Publisher Reward ($)',
             dataIndex: 'publisherReward',
             key: 'publisherReward',
@@ -95,14 +113,21 @@ const Mycompaign: React.FC = () => {
             dataIndex: 'status',
             key: 'status',
             render: (status: string) => (
-                <Tag color={
-                    status === 'Pending' ? 'orange' :
-                        status === 'Approve' ? 'purple' :
-                            status === 'Reject' ? 'red' :
-                                status === 'Running' ? 'cyan' :
-                                    status === 'Complete' ? 'green-inverse' : // Custom inverse green for 'Complete'
-                                        'grey' // Default color if status is not recognized
-                }>
+                <Tag
+                    color={
+                        status === 'Pending'
+                            ? 'orange'
+                            : status === 'Approve'
+                            ? 'purple'
+                            : status === 'Reject'
+                            ? 'red'
+                            : status === 'Running'
+                            ? 'cyan'
+                            : status === 'Complete'
+                            ? 'green-inverse' // Custom inverse green for 'Complete'
+                            : 'grey' // Default color if status is not recognized
+                    }
+                >
                     {status}
                 </Tag>
             ),
@@ -121,9 +146,7 @@ const Mycompaign: React.FC = () => {
             title: 'View Proof',
             key: 'actions',
             render: (_: any, record: Task) => (
-                <Button
-                // type="primary" 
-                >
+                <Button>
                     <Link to={`/my-campaign/${record._id}`}>View Proof</Link>
                 </Button>
             ),
@@ -132,9 +155,10 @@ const Mycompaign: React.FC = () => {
             title: 'View App/Rej/Rev',
             key: 'actions',
             render: (_: any, record: Task) => (
-                <Button
-                >
-                    <Link to={`/my-campaign/${record._id}/allApRejRevTask`}><Tooltip title="view all user App/Rej/Rev task">View All </Tooltip></Link>
+                <Button>
+                    <Link to={`/my-campaign/${record._id}/allApRejRevTask`}>
+                        <Tooltip title="view all user App/Rej/Rev task">View All</Tooltip>
+                    </Link>
                 </Button>
             ),
         },
@@ -145,14 +169,19 @@ const Mycompaign: React.FC = () => {
                 <Button
                     type={record.active ? 'default' : 'primary'}
                     onClick={() => handleStatusToggle(record._id, record.active)}
-                    disabled={record.status === 'Pending' || record.status === 'Reject' || record.status === 'Complete'}
-                    icon={record.active ? <PauseOutlined /> : <PlayCircleOutlined />} // Set the icon based on the active status
+                    disabled={
+                        record.status === 'Pending' ||
+                        record.status === 'Reject' ||
+                        record.status === 'Complete'
+                    }
+                    icon={record.active ? <PauseOutlined /> : <PlayCircleOutlined />}
                 >
                     {record.active ? 'Pause' : 'Enable'}
                 </Button>
             ),
         },
     ];
+    
 
     return (
         <>
