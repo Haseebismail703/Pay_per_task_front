@@ -65,7 +65,7 @@ const CreateTask: React.FC = () => {
                 totalPriceWithoutFee,
                 advertiserId: user?.user_data.id || '',
             });
-
+        console.log(user)
             if (response.status === 200) {
                 notification.success({
                     message: 'Task Created Successfully',
@@ -74,10 +74,16 @@ const CreateTask: React.FC = () => {
                 form.resetFields();
             }
         } catch (error) {
-            notification.error({
+            if (axios.isAxiosError(error)) {
+                // console.log(error.response?.data.message);
+                notification.error({
                 message: 'Error Creating Task',
-                description: 'There was an issue creating your task. Please try again.',
+                description: error.response?.data.message || 'There was an issue creating your task. Please try again.',
             });
+            } else {
+                console.log(error);
+            }
+            
         }
     };
 

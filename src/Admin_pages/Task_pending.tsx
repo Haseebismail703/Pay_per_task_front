@@ -62,7 +62,8 @@ const PendingTasks: React.FC = () => {
     const handleRejectTask = async () => {
         if (selectedTask) {
             try {
-                await axios.put(`${api}/reject_task/${selectedTask._id}`, { reject_reason: rejectionReason, status: "Reject" });
+                await axios.put(`${api}/reject_task/${selectedTask._id}`, { reject_reason: rejectionReason, status: "Reject" ,
+                    advertiserId : selectedTask.advertiserId , totalPriceWithoutFee : selectedTask.totalPriceWithoutFee});
                 setIsRejectModalVisible(false);
                 notification.success({
                     message: 'Task Rejected',
