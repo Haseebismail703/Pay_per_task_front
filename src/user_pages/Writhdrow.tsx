@@ -1,92 +1,113 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Typography, Radio, Space, Button, Row, Col, Divider, Input, Image, message } from 'antd';
+import {
+    Card,
+    Typography,
+    Radio,
+    Space,
+    Button,
+    Row,
+    Col,
+    Divider,
+    Input,
+    Image,
+    message,
+} from 'antd';
 import { DollarCircleOutlined } from '@ant-design/icons';
 import Navbar from '../usercomp/user_nav';
 import axios from 'axios';
 import api from '../api/api';
+
 const { Title, Text } = Typography;
+
 interface User {
     id: number;
     earning: string;
     advBalance: string;
+    payeer: string;
+    perfectMoney: string;
 }
+
 const WithdrawPage: React.FC = () => {
     const [selectedMethod, setSelectedMethod] = useState<'payeer' | 'perfectMoney' | null>(null);
     const [payoutAmount, setPayoutAmount] = useState<number | null>(null);
-    const [userData, setUserData] = useState<User>()
+    const [userData, setUserData] = useState<User | null>(null);
 
-    const availableBalance = 50; // Example balance
+    const availableBalance = userData ? parseFloat(userData.earning) : 0; // Example balance
     const minimumWithdrawals = {
         payeer: 2,
         perfectMoney: 3,
     };
-    let getUser = async () => {
-        let user = JSON.parse(localStorage.getItem('user') || '{}');
-        let response = await axios.get<User>(`${api}/getUserByid/${user.user_data?.id}`)
-        setUserData(response.data)
-        console.log(response.data)
-    }
+
+    const getUser = async () => {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const response = await axios.get<User>(`${api}/getUserByid/${user.user_data?.id}`);
+        setUserData(response.data);
+        console.log(response.data);
+    };
+
     useEffect(() => {
-        getUser()
-    }, [])
-    // Handle payout method change
+        getUser();
+    }, []);
+
     const handleMethodChange = (e: any) => {
         const method = e.target.value;
         setSelectedMethod(method);
         console.log('Selected Method:', method);
     };
 
-    // Handle payout amount change
     const handlePayoutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseFloat(e.target.value);
         setPayoutAmount(isNaN(value) ? null : value);
-        console.log('Payout Amount:', payoutAmount);
     };
 
-    // Handle withdraw action
- const handleWithdraw = async () => {
-    if (!userData) {
-        message.error('User data is not available.');
-        return;
-    }
-
-    if (
-        payoutAmount &&
-        payoutAmount <= availableBalance &&
-        selectedMethod &&
-        payoutAmount >= minimumWithdrawals[selectedMethod]
-    ) {
-        // Check if user's earning is greater than or equal to the payout amount
-        if (parseFloat(userData.earning) < payoutAmount) {
-            message.error('Insufficient earnings. Payout amount exceeds available earnings.');
+    const handleWithdraw = async () => {
+        if (!userData) {
+            message.error('User data is not available.');
             return;
         }
 
-        let user = JSON.parse(localStorage.getItem('user') || '{}');
-        try {
-            const response = await axios.post(`${api}/payment`, {
-                userId: user.user_data?.id,
-                paymentMethod: selectedMethod,
-                paymentType: 'Withdraw',
-                amount: payoutAmount,
-            });
-
-            if (response.status === 200) {
-                message.success(`Successfully withdrew $${payoutAmount} via ${selectedMethod}`);
-                setPayoutAmount(null);
-                setSelectedMethod(null);
-            } else {
-                message.error('Withdrawal failed. Please try again.');
-            }
-        } catch (error) {
-            console.error('Error processing withdrawal:', error);
-            message.error('An error occurred. Please try again.');
+        if (selectedMethod && !userData[selectedMethod]) {
+            message.error(`Please provide a valid ${selectedMethod} wallet address.`);
+            return;
         }
-    } else {
-        message.error('Invalid withdrawal amount or method.');
-    }
-};
 
+        if (
+            payoutAmount &&
+            payoutAmount !== null && payoutAmount <= availableBalance &&
+            selectedMethod &&
+            payoutAmount >= minimumWithdrawals[selectedMethod]
+        ) {
+            if (parseFloat(userData.earning) < payoutAmount) {
+                message.error('Insufficient earnings. Payout amount exceeds available earnings.');
+                return;
+            }
+
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            try {
+                const response = await axios.post(`${api}/payment`, {
+                    userId: user.user_data?.id,
+                    paymentMethod: selectedMethod,
+                    paymentType: 'Withdraw',
+                    amount: payoutAmount,
+                    walletAddress : selectedMethod === "payeer" ? userData.payeer : userData.perfectMoney
+                });
+
+                if (response.status === 200) {
+                    message.success(`Successfully withdrew $${payoutAmount} via ${selectedMethod}`);
+                    setPayoutAmount(null);
+                    setSelectedMethod(null);
+                    getUser();
+                } else {
+                    message.error('Withdrawal failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error processing withdrawal:', error);
+                message.error('An error occurred. Please try again.');
+            }
+        } else {
+            message.error('Invalid withdrawal amount or method.');
+        }
+    };
 
     return (
         <>
@@ -156,9 +177,13 @@ const WithdrawPage: React.FC = () => {
                                         </span>
                                     </Text>
                                     <Text>
-                                        Please note: Ensure your balance meets the minimum requirement for the selected
-                                        withdrawal method.
+                                        Wallet Address: {userData ? userData[selectedMethod] || 'Not Provided' : 'Not Provided'}
                                     </Text>
+                                    {userData && !userData[selectedMethod] && (
+                                        <Text type="danger">
+                                            Please add your {selectedMethod} wallet address to proceed.
+                                        </Text>
+                                    )}
                                 </Space>
                             )}
 
