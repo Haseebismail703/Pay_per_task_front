@@ -3,7 +3,7 @@ import { Table, Button, Modal, Input, Spin, message } from 'antd';
 import Admin_navb from '../Admin_comp/Admin_navb';
 import axios from 'axios';
 import api from '../api/api';
-
+import { CopyOutlined } from '@ant-design/icons';
 interface PaymentRecord {
   id: string;
   key: string;
@@ -14,11 +14,14 @@ interface PaymentRecord {
   paymentMethod: string;
   TID: string;
   userId: string;
+  payeer: string;
+  perfectMoney: string;
+  walletAddress: string;
 }
-interface User {
-  earning: string;
-  advBalance: string;
-}
+// interface User {
+//   earning: string;
+//   advBalance: string;
+// }
 const PaymentRequestPage: React.FC = () => {
   const [isTIDModalVisible, setIsTIDModalVisible] = useState(false);
   const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
@@ -30,7 +33,7 @@ const PaymentRequestPage: React.FC = () => {
   const [withdraw, setWithdraw] = useState<PaymentRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [fundAmount, setFundAmount] = useState(''); // New state to handle fund amount input
-  const [user, setUser] = useState<User>()
+  // const [user, setUser] = useState<User>()
 
 
 
@@ -48,6 +51,7 @@ const PaymentRequestPage: React.FC = () => {
         amount: `${item.amount}`,
         userId: item.userId,
         TID: item.TID || 'N/A',
+        walletAddress: item.walletAddress
       }));
       setDeposit(depositData);
 
@@ -61,6 +65,7 @@ const PaymentRequestPage: React.FC = () => {
         amount: `${item.amount}`,
         TID: item.TID || 'N/A',
         userId: item.userId,
+        walletAddress: item.walletAddress
       }));
       setWithdraw(withdrawData);
     } catch (error) {
@@ -137,9 +142,9 @@ const PaymentRequestPage: React.FC = () => {
     }
   };
 
-  const columns = [
+  const withdrowColumns = [
     {
-      title: 'id',
+      title: 'userId',
       dataIndex: 'userId',
       key: 'userId',
     },
@@ -164,9 +169,22 @@ const PaymentRequestPage: React.FC = () => {
       key: 'paymentMethod',
     },
     {
-      title: 'TID',
-      dataIndex: 'TID',
-      key: 'TID',
+      title: 'Wallet Address',
+      dataIndex: 'walletAddress',
+      key: 'walletAddress',
+      render: (walletAddress: string) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span>{walletAddress}</span>
+          <Button
+            type="link"
+            icon={<CopyOutlined />}
+            onClick={() => {
+              navigator.clipboard.writeText(walletAddress);
+              message.success('Wallet address copied to clipboard!');
+            }}
+          />
+        </div>
+      ),
     },
     {
       title: 'Created At',
@@ -192,9 +210,9 @@ const PaymentRequestPage: React.FC = () => {
     },
   ];
 
-  const Withdrowcolumns = [
+  const depositeColumns = [
     {
-      title: 'id',
+      title: 'userId',
       dataIndex: 'userId',
       key: 'userId',
     },
@@ -222,7 +240,21 @@ const PaymentRequestPage: React.FC = () => {
       title: 'TID',
       dataIndex: 'TID',
       key: 'TID',
+      render: (tid: string) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span>{tid}</span>
+          <Button
+            type="link"
+            icon={<CopyOutlined />}
+            onClick={() => {
+              navigator.clipboard.writeText(tid);
+              message.success('TID copied to clipboard!');
+            }}
+          />
+        </div>
+      ),
     },
+    
     {
       title: 'Created At',
       dataIndex: 'createdAt',
@@ -253,12 +285,12 @@ const PaymentRequestPage: React.FC = () => {
       <div style={{ padding: '20px' }}>
         <h2>Withdrawals</h2>
         <Spin spinning={loading}>
-          <Table scroll={{ "x": "100" }} dataSource={withdraw} columns={columns} pagination={false} style={{ width: '100%' }} />
+          <Table scroll={{ "x": "100" }} dataSource={withdraw} columns={withdrowColumns} pagination={false} style={{ width: '100%' }} />
         </Spin>
 
         <h2>Deposits</h2>
         <Spin spinning={loading}>
-          <Table scroll={{ "x": "100" }} dataSource={deposit} columns={Withdrowcolumns} pagination={false} style={{ width: '100%' }} />
+          <Table scroll={{ "x": "100" }} dataSource={deposit} columns={depositeColumns} pagination={false} style={{ width: '100%' }} />
         </Spin>
 
         {/* Modal for Add Fund */}
