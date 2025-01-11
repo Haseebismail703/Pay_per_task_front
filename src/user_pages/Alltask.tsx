@@ -24,6 +24,7 @@ interface Task {
         completed: number;
         total: number;
     };
+    taskProof : number;
     budget: number;
     date: Date;
 }
@@ -43,7 +44,6 @@ const TaskDisplay: React.FC = () => {
                 const response = await axios.get<Task[]>(`${api}/getTaskuser`);
                 const tasksWithProgress = response.data.map(task => ({
                     ...task,
-                    progress: { completed: Math.min(task.workersNeeded, task.workersNeeded), total: task.workersNeeded }, // Example progress calculation
                 }));
                 setTasks(tasksWithProgress);
                 setFilteredTasks(tasksWithProgress);
@@ -125,11 +125,11 @@ const TaskDisplay: React.FC = () => {
                             >
                                 <p>{task.taskDescription}</p>
                                 <Progress
-                                    percent={(task.progress.completed / task.progress.total) * 100}
-                                    status={task.progress.completed >= task.progress.total ? 'success' : 'active'}
+                                    percent={(task.taskProof / task.workersNeeded) * 100}
+                                    status={task.taskProof >= task.workersNeeded ? 'success' : 'active'}
                                 />
                                 <p style={{ marginTop: '10px' }}>
-                                    Progress: {task.progress.completed} out of {task.progress.total}
+                                    Progress: {task.taskProof} out of {task.workersNeeded}
                                 </p>
                                 <p style={{ fontWeight: 'bold' }}>${task.publisherReward}</p>
                             </Card>

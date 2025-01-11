@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Menu, Dropdown, Avatar, Space, Drawer, Button, Badge, Tag, Divider } from 'antd';
 import {
     UserOutlined,
@@ -15,8 +15,15 @@ import {
     ExportOutlined
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import api from '../api/api';
 const { Header } = Layout;
-
+interface User {
+    earning : number ;
+    advBalance : number;
+    username : string;
+    profileurl : string;
+}
 const Navbar: React.FC = () => {
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [notifications, setNotifications] = useState([
@@ -25,6 +32,7 @@ const Navbar: React.FC = () => {
         { message: "Withdrawal rejected due to insufficient balance.", type: "Withdrawal Rejected", path: "/withdraw-history" },
     ]);
     const [notificationDrawerVisible, setNotificationDrawerVisible] = useState(false);
+    const [user,setUser] = useState<User>()
     const navigate = useNavigate();
 
     const handleDrawerOpen = () => setDrawerVisible(true);
@@ -95,6 +103,20 @@ const Navbar: React.FC = () => {
         },
     ];
 
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            let user = JSON.parse(localStorage.getItem('user') || '{}');
+            try {
+                const response = await axios.get<User>(`${api}/userProfile/${user?.user_data.id}`);
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
+
+        fetchNotifications();
+    }, []);
+
     return (
         <>
             <Header style={{
@@ -137,8 +159,8 @@ const Navbar: React.FC = () => {
                         placement="bottomRight"
                     >
                         <Space align="center" style={{ cursor: 'pointer', color: 'white' }}>
-                            <Avatar icon={<UserOutlined />} />
-                            <span style={{ color: 'white', fontWeight: 500 }}>John Doe</span>
+                            <Avatar src={user?.profileurl || ''} />
+                            <span style={{ color: 'white', fontWeight: 500 }}>{user?.username}</span>
                         </Space>
                     </Dropdown>
                 </Space>
@@ -157,9 +179,9 @@ const Navbar: React.FC = () => {
                     <center>
                         <h3>Earnings</h3>
                         
-                        <Tag color="green" style={{ marginLeft: '8px' }}>$1000</Tag>
+                        <Tag color="green" style={{ marginLeft: '8px' }}>{user?.earning}$</Tag>
                         <h3>Advertising Balance</h3>
-                        <Tag color="green" style={{ marginLeft: '8px' }}>$1000</Tag>
+                        <Tag color="green" style={{ marginLeft: '8px' }}>{user?.advBalance}$</Tag>
                     </center>
 
                     <Divider />
