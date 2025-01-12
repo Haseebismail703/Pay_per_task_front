@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Menu, Dropdown, Avatar, Space, Drawer, Button, Badge, Tag } from 'antd';
 import {
     UserOutlined,
@@ -16,11 +16,22 @@ import {
     FileTextOutlined, // Changed to FileTextOutlined for Task Reports
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import api from '../api/api';
 
 const { Header } = Layout;
+interface User {
+    earning: number;
+    advBalance: number;
+    username: string;
+    profileurl: string;
+    pending: number;
+    completed: string;
 
+}
 const Admin_navb: React.FC = () => {
     const [drawerVisible, setDrawerVisible] = useState(false);
+    const [user, setUser] = useState<User>()
     const [notifications, setNotifications] = useState([
         { message: "Task completed successfully!", type: "Task Complete", path: "/tasks" },
         { message: "Deposit successful! Amount added.", type: "Deposit Successful", path: "/deposit-history" },
@@ -38,6 +49,21 @@ const Admin_navb: React.FC = () => {
         navigate(path);
         handleNotificationDrawerClose();
     };
+
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            let user = JSON.parse(localStorage.getItem('user') || '{}');
+            try {
+                const response = await axios.get<any>(`${api}/userProfile/${user?.user_data.id}`);
+                setUser(response.data.user);
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
+
+        fetchNotifications();
+    }, []);
 
     const profileMenuItems = [
         {
@@ -88,12 +114,12 @@ const Admin_navb: React.FC = () => {
         },
         {
             key: '5',
-            icon: <FundOutlined />, 
+            icon: <FundOutlined />,
             label: <Link to={"/admin/payment_request"}>Payment Requests</Link>,
         },
         {
             key: '6',
-            icon: <WalletOutlined />, 
+            icon: <WalletOutlined />,
             label: <Link to={"/admin/payment_history"}>Payment history</Link>,
 
         },
@@ -141,8 +167,8 @@ const Admin_navb: React.FC = () => {
                         placement="bottomRight"
                     >
                         <Space align="center" style={{ cursor: 'pointer', color: 'white' }}>
-                            <Avatar icon={<UserOutlined />} />
-                            <span style={{ color: 'white', fontWeight: 500 }}>Haseeb</span>
+                            <Avatar src={user?.profileurl || ''} />
+                            <span style={{ color: 'white', fontWeight: 500 }}>{user?.username}</span>
                         </Space>
                     </Dropdown>
                 </Space>
