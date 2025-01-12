@@ -23,6 +23,9 @@ interface User {
     advBalance : number;
     username : string;
     profileurl : string;
+    pending : number;
+    completed : string;
+
 }
 const Navbar: React.FC = () => {
     const [drawerVisible, setDrawerVisible] = useState(false);
@@ -107,8 +110,8 @@ const Navbar: React.FC = () => {
         const fetchNotifications = async () => {
             let user = JSON.parse(localStorage.getItem('user') || '{}');
             try {
-                const response = await axios.get<User>(`${api}/userProfile/${user?.user_data.id}`);
-                setUser(response.data);
+                const response = await axios.get<any>(`${api}/userProfile/${user?.user_data.id}`);
+                setUser(response.data.user);
             } catch (error) {
                 console.error('Error fetching notifications:', error);
             }

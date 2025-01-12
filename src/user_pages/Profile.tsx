@@ -11,9 +11,9 @@ interface User {
   username: string;
   email: string;
   profileurl: string;
-  totalEarnings: number;
-  completedTasks: number;
-  pendingTasks: number;
+  earning: number;
+  completed: number;
+  pending: number;
   progress: number;
   payeer: string;
   perfectMoney: string;
@@ -27,9 +27,9 @@ const UserProfile: React.FC = () => {
     username: '',
     email: '',
     profileurl: '',
-    totalEarnings: 0,
-    completedTasks: 0,
-    pendingTasks: 0,
+    earning: 0,
+    completed: 0,
+    pending: 0,
     progress: 0,
     payeer: '',
     perfectMoney: ''
@@ -39,8 +39,8 @@ const UserProfile: React.FC = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     try {
       const response = await axios.get(`${api}/userProfile/${user?.user_data.id}`);
-      setUserDetails(response.data);
-      // console.log('User data:', userData);
+      setUserDetails(response.data?.user);
+      console.log('User data:',response.data?.user );
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
@@ -163,7 +163,7 @@ const UserProfile: React.FC = () => {
             >
               <DollarCircleOutlined style={{ fontSize: '48px', color: '#52c41a', marginBottom: '10px' }} />
               <Title level={4} style={{ marginBottom: '5px' }}>Total Earnings</Title>
-              <Text strong style={{ fontSize: '16px', color: '#333' }}>${userDetails.totalEarnings}</Text>
+              <Text strong style={{ fontSize: '16px', color: '#333' }}>${userDetails.earning}</Text>
             </Card>
           </Col>
           <Col xs={24} sm={12} md={8}>
@@ -177,7 +177,7 @@ const UserProfile: React.FC = () => {
             >
               <ProfileOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '10px' }} />
               <Title level={4} style={{ marginBottom: '5px' }}>Completed Tasks</Title>
-              <Text strong style={{ fontSize: '16px', color: '#333' }}>{userDetails.completedTasks}</Text>
+              <Text strong style={{ fontSize: '16px', color: '#333' }}>{userDetails.completed}</Text>
             </Card>
           </Col>
           <Col xs={24} sm={12} md={8}>
@@ -191,7 +191,7 @@ const UserProfile: React.FC = () => {
             >
               <HourglassOutlined style={{ fontSize: '48px', color: '#faad14', marginBottom: '10px' }} />
               <Title level={4} style={{ marginBottom: '5px' }}>Pending Tasks</Title>
-              <Text strong style={{ fontSize: '16px', color: '#333' }}>{userDetails.pendingTasks}</Text>
+              <Text strong style={{ fontSize: '16px', color: '#333' }}>{userDetails.pending}</Text>
             </Card>
           </Col>
         </Row>
