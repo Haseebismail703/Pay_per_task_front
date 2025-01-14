@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Typography, Steps, Button, Row, Col, Input, Radio, Image, message } from 'antd';
 import { DollarCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
@@ -7,16 +7,21 @@ import api from '../api/api';
 
 const { Title, Text } = Typography;
 const { Step } = Steps;
-
+interface User {
+    id: number;
+    earning: string;
+    advBalance: string;
+    payeer: string;
+    perfectMoney: string;
+}
 const DepositPage: React.FC = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [selectedMethod, setSelectedMethod] = useState<'payeer' | 'perfectMoney' | null>(null);
     const [depositAmount, setDepositAmount] = useState<number | null>(null);
     const [TID, setTID] = useState<string>('');
     const [loading, setLoading] = useState(false);
-
-    const advertisingBalance = 250;
-
+    const [userData, setUserData] = useState<User | null>(null);
+   
     const nextStep = () => setCurrentStep(currentStep + 1);
     const prevStep = () => setCurrentStep(currentStep - 1);
 
@@ -26,6 +31,18 @@ const DepositPage: React.FC = () => {
         setDepositAmount(isNaN(value) ? null : value);
     };
     const handleTIDChange = (e: React.ChangeEvent<HTMLInputElement>) => setTID(e.target.value);
+
+    const getUser = async () => {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const response = await axios.get<User>(`${api}/getUserByid/${user.user_data?.id}`);
+        setUserData(response.data);
+        console.log(response.data);
+    };
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
 
     const handleDeposit = async () => {
         if (depositAmount && depositAmount > 0 && selectedMethod && TID) {
@@ -80,7 +97,7 @@ const DepositPage: React.FC = () => {
                     <Card
                         title={
                             <Title level={3}>
-                                Advertising Balance: <span style={{ color: '#52c41a' }}>${advertisingBalance.toFixed(2)}</span>
+                                Advertising Balance: <span style={{ color: '#52c41a' }}>${parseFloat(userData?.advBalance || '0').toFixed(2)}</span>
                             </Title>
                         }
                         bordered={false}

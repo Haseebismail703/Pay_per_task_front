@@ -23,11 +23,13 @@ import LoginPage from './user_pages/Login'
 import ApRejRev from './user_pages/ApRejRev'
 import ReportTask from './Admin_pages/ReportTask'
 import SignUpForm from './user_pages/Signup'
+import HomePage from './Home/Home'
 function App() {
   return (
     <div>
       <BrowserRouter>
         <Routes>
+          <Route path='/' element={<HomePage/>} />
           {/* Publisher */}
           <Route path='/all-tasks' element={<Alltask />} />
           <Route path='/all-tasks/:taskId' element={<TaskSubmitPage />} />
