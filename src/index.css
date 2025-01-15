@@ -1,0 +1,189 @@
+.hero-section {
+    background: linear-gradient(to right, #4a90e2, #50e3c2);
+    padding: 50px 20px;
+  }
+  
+  .hero-content {
+    max-width: 1200px;
+    margin: auto;
+  }
+  
+  .text-content {
+    text-align: center;
+  }
+  
+  @media (min-width: 768px) {
+    .text-content {
+      text-align: left;
+    }
+  }
+  
+  .image-content img {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  /* How It Works Section */
+.how-it-works {
+    background-color: #f9f9f9;
+    padding: 50px 20px;
+    text-align: center;
+  }
+  
+  .section-title {
+    margin-bottom: 40px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .how-it-works-card {
+    background: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .how-it-works-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+  }
+/* Features Section */
+.features-section {
+    background-color: #ffffff;
+    padding: 50px 20px;
+    text-align: center;
+  }
+  
+  .section-title {
+    margin-bottom: 40px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .feature-card {
+    background: #f9f9f9;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+  }
+    
+  /* Task Categories Section */
+.task-categories {
+    background-color: #f5f5f5;
+    padding: 50px 20px;
+    text-align: center;
+  }
+  
+  .section-title {
+    margin-bottom: 40px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .category-card {
+    background: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .category-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+  }
+/* FAQs Section */
+.faqs-section {
+    background-color: #f5f5f5;
+    padding: 50px 20px;
+  }
+  
+  .faqs-title {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .faqs-collapse {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .faqs-collapse .ant-collapse-header {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1890ff;
+  }
+  
+  .faqs-collapse .ant-collapse-item {
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .faqs-collapse .ant-collapse-content {
+    background-color: #ffffff;
+    padding: 15px;
+  }
+
+  /* Call to Action Section */
+.cta-section {
+    background: linear-gradient(135deg, #4caf50, #2c8ee5);
+    color: #fff;
+    padding: 80px 20px;
+    text-align: center;
+  }
+  
+  .cta-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .cta-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  
+  .cta-description {
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .cta-button {
+    background: #ff9800;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .cta-button:hover {
+    background: #e68900;
+    color: #fff;
+  }
+  
+  .cta-button-secondary {
+    background: #fff;
+    color: #4caf50;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .cta-button-secondary:hover {
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c8ee5;
+  }
+  

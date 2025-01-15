@@ -1,0 +1,57 @@
+import React from 'react';
+import { Row, Col, Card, Typography } from 'antd';
+import { CheckCircleOutlined } from '@ant-design/icons';
+
+const { Title, Text } = Typography;
+
+const steps = [
+  {
+    title: 'Sign Up',
+    description: 'Create an account to get started.',
+    icon: <CheckCircleOutlined style={{ fontSize: '48px', color: '#4caf50' }} />,
+  },
+  {
+    title: 'Choose Tasks',
+    description: 'Browse and select tasks that suit you.',
+    icon: <CheckCircleOutlined style={{ fontSize: '48px', color: '#4caf50' }} />,
+  },
+  {
+    title: 'Complete Tasks',
+    description: 'Submit completed tasks for approval.',
+    icon: <CheckCircleOutlined style={{ fontSize: '48px', color: '#4caf50' }} />,
+  },
+  {
+    title: 'Earn Rewards',
+    description: 'Get paid for your hard work.',
+    icon: <CheckCircleOutlined style={{ fontSize: '48px', color: '#4caf50' }} />,
+  },
+];
+
+const HowItWorks: React.FC = () => {
+  return (
+    <div className="how-it-works">
+      <Title level={2} className="section-title">
+        How It Works
+      </Title>
+      <Row gutter={[24, 24]} justify="center">
+        {steps.map((step, index) => (
+          <Col xs={24} sm={12} md={6} key={index}>
+            <Card
+              hoverable
+              className="how-it-works-card"
+              style={{ textAlign: 'center', borderRadius: '10px', padding: '20px' }}
+            >
+              {step.icon}
+              <Title level={4} style={{ marginTop: '20px' }}>
+                {step.title}
+              </Title>
+              <Text>{step.description}</Text>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </div>
+  );
+};
+
+export default HowItWorks;
