@@ -54,7 +54,7 @@ const TaskCategories: React.FC = () => {
   }, []);
 
   return (
-    <div className="task-categories">
+    <div id='taskCategories' className="task-categories">
       <Title level={2} className="section-title" data-aos="fade-up">
         Explore Task Categories
       </Title>

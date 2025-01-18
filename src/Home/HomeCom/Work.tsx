@@ -37,7 +37,7 @@ const HowItWorks: React.FC = () => {
   }, []);
 
   return (
-    <div className="how-it-works">
+    <div id="HowItsWork" className="how-it-works">
       <Title level={2} className="section-title" data-aos="fade-up">
         How It Works
       </Title>

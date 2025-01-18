@@ -1,12 +1,30 @@
 import React from 'react';
 import { Layout, Menu, Button, Row, Col, Typography, Space } from 'antd';
-import { HomeOutlined, CheckCircleOutlined, WalletOutlined, PhoneOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { 
+  HomeOutlined, 
+  InfoCircleOutlined, 
+  BulbOutlined, 
+  AppstoreOutlined, 
+  QuestionCircleOutlined 
+} from '@ant-design/icons';
+import { Link, useNavigate } from 'react-router-dom';
 
 const { Header } = Layout;
 const { Title } = Typography;
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
+
+  // Function to handle navigation and smooth scrolling
+  const handleMenuClick = (e: { key: string }) => {
+    const section = document.getElementById(e.key); // Match section ID for scrolling
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate(`/${e.key}`); // Navigate to the route if section doesn't exist
+    }
+  };
+
   return (
     <Header style={{ backgroundColor: '#001529' }}>
       <Row justify="space-between" align="middle">
@@ -21,18 +39,26 @@ const Navbar: React.FC = () => {
 
         {/* Navigation Menu */}
         <Col>
-          <Menu mode="horizontal" theme="dark" style={{ lineHeight: '64px' }}>
+          <Menu
+            mode="horizontal"
+            theme="dark"
+            style={{ lineHeight: '64px' }}
+            onClick={handleMenuClick} // Attach the click handler here
+          >
             <Menu.Item key="home" icon={<HomeOutlined />} style={{ fontSize: '16px' }}>
-              <Link to="/">Home</Link>
+              Home
             </Menu.Item>
-            <Menu.Item key="tasks" icon={<CheckCircleOutlined />} style={{ fontSize: '16px' }}>
-              <Link to="/tasks">Tasks</Link>
+            <Menu.Item key="HowItsWork" icon={<InfoCircleOutlined />} style={{ fontSize: '16px' }}>
+              How It Works
             </Menu.Item>
-            <Menu.Item key="payments" icon={<WalletOutlined />} style={{ fontSize: '16px' }}>
-              <Link to="/payments">Payments</Link>
+            <Menu.Item key="keyFeatures" icon={<BulbOutlined />} style={{ fontSize: '16px' }}>
+              Key Features
             </Menu.Item>
-            <Menu.Item key="contact" icon={<PhoneOutlined />} style={{ fontSize: '16px' }}>
-              <Link to="/contact">Contact Us</Link>
+            <Menu.Item key="taskCategories" icon={<AppstoreOutlined />} style={{ fontSize: '16px' }}>
+              Task Categories
+            </Menu.Item>
+            <Menu.Item key="FAQs" icon={<QuestionCircleOutlined />} style={{ fontSize: '16px' }}>
+              FAQs
             </Menu.Item>
           </Menu>
         </Col>
@@ -40,7 +66,12 @@ const Navbar: React.FC = () => {
         {/* Call to Action Button */}
         <Col>
           <Space>
-            <Button type="primary" size="large" style={{ borderRadius: '30px' }} href="/signup">
+            <Button
+              type="primary"
+              size="large"
+              style={{ borderRadius: '30px' }}
+              onClick={() => navigate('/signup')} // Navigate to the signup page
+            >
               Sign Up
             </Button>
           </Space>

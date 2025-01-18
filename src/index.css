@@ -1,27 +1,76 @@
 .hero-section {
-    background: linear-gradient(to right, #4a90e2, #50e3c2);
-    padding: 50px 20px;
-  }
-  
-  .hero-content {
-    max-width: 1200px;
-    margin: auto;
-  }
-  
+  background: linear-gradient(135deg, #4a90e2, #50e3c2);
+  padding: 60px 20px;
+  color: #ffffff;
+}
+
+.hero-content {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.text-content {
+  text-align: center;
+}
+
+.hero-title {
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.hero-text {
+  font-size: 18px;
+  color: #f0f0f0;
+}
+
+.cta-button {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 20px;
+}
+
+.cta-button.primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+  color: #ffffff;
+  transition: transform 0.3s ease;
+}
+
+.cta-button.primary:hover {
+  background-color: #40a9ff;
+  border-color: #40a9ff;
+  transform: translateY(-5px);
+}
+
+.cta-button.secondary {
+  color: #1890ff;
+  border-color: #1890ff;
+  transition: transform 0.3s ease;
+}
+
+.cta-button.secondary:hover {
+  color: #40a9ff;
+  border-color: #40a9ff;
+  transform: translateY(-5px);
+}
+
+.image-content img {
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.image-content img:hover {
+  transform: scale(1.05);
+}
+
+@media (min-width: 768px) {
   .text-content {
-    text-align: center;
+    text-align: left;
   }
-  
-  @media (min-width: 768px) {
-    .text-content {
-      text-align: left;
-    }
-  }
-  
-  .image-content img {
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
+}
+
   
 
   /* How It Works Section */

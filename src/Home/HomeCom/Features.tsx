@@ -42,7 +42,7 @@ const Features: React.FC = () => {
   }, []);
 
   return (
-    <div className="features-section">
+    <div id='keyFeatures' className="features-section">
       <Title level={2} className="section-title" data-aos="fade-up">
         Key Features
       </Title>

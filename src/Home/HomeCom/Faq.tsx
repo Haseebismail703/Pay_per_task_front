@@ -29,7 +29,7 @@ const FAQs: React.FC = () => {
   ];
 
   return (
-    <div className="faqs-section">
+    <div id='FAQs' className="faqs-section">
       <Title level={2} className="faqs-title">
         Frequently Asked Questions
       </Title>
