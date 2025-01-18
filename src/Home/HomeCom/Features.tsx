@@ -7,8 +7,7 @@ import {
   TrophyOutlined,
 } from '@ant-design/icons';
 import AOS from 'aos';
-import 'aos/dist/aos.css';
-
+ 
 const { Title, Text } = Typography;
 
 const features = [
