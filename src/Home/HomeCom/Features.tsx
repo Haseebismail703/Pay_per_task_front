@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Col, Typography, Card } from 'antd';
 import {
   ThunderboltOutlined,
@@ -6,7 +6,8 @@ import {
   SafetyOutlined,
   TrophyOutlined,
 } from '@ant-design/icons';
-
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const { Title, Text } = Typography;
 
@@ -34,14 +35,28 @@ const features = [
 ];
 
 const Features: React.FC = () => {
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Animation duration in milliseconds
+      offset: 100,    // Offset from the viewport
+    });
+  }, []);
+
   return (
     <div className="features-section">
-      <Title level={2} className="section-title">
+      <Title level={2} className="section-title" data-aos="fade-up">
         Key Features
       </Title>
       <Row gutter={[24, 24]} justify="center">
         {features.map((feature, index) => (
-          <Col xs={24} sm={12} md={6} key={index}>
+          <Col
+            xs={24}
+            sm={12}
+            md={6}
+            key={index}
+            data-aos="zoom-in" // Apply animation
+            data-aos-delay={index * 200} // Add delay for staggered animation
+          >
             <Card
               hoverable
               className="feature-card"
