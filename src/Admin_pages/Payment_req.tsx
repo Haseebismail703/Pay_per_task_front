@@ -130,7 +130,7 @@ const PaymentRequestPage: React.FC = () => {
   const handleAddFunds = async () => {
     if (!selectedRecord) return;
     try {
-      const payload = { amount: Number(fundAmount), status: 'added', rejectReason: 'N/A', userId: selectedRecord.userId };
+      const payload = { amount: Number(fundAmount), status: 'added', rejectReason: 'N/A', userId: selectedRecord.userId , messageId :selectedRecord.id  };
       console.log(payload, selectedRecord)
       await axios.put(`${api}/paidWithdrow/${selectedRecord.id}`, payload);
       message.success('Funds added successfully');
@@ -254,7 +254,7 @@ const PaymentRequestPage: React.FC = () => {
         </div>
       ),
     },
-    
+
     {
       title: 'Created At',
       dataIndex: 'createdAt',
