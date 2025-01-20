@@ -102,7 +102,7 @@ const PaymentRequestPage: React.FC = () => {
     if (!selectedRecord) return;
     console.log(selectedRecord)
     try {
-      const payload = { TID: newTID, status: 'paid', amount: Number(selectedRecord.amount), rejectReason: rejectReason || 'N/A', userId: selectedRecord.userId };
+      const payload = { TID: newTID, status: 'paid', amount: Number(selectedRecord.amount), rejectReason: rejectReason || 'N/A', userId: selectedRecord.userId , messageId :selectedRecord.id};
       await axios.put(`${api}/paidWithdrow/${selectedRecord.id}`, payload);
       message.success('TID and status updated successfully');
       setIsTIDModalVisible(false);
@@ -116,7 +116,7 @@ const PaymentRequestPage: React.FC = () => {
   const handleRejectPayment = async () => {
     if (!selectedRecord) return;
     try {
-      const payload = { TID: newTID, status: 'reject', amount: Number(fundAmount), rejectReason: rejectReason || 'N/A', userId: selectedRecord.userId };
+      const payload = { TID: newTID, status: 'reject', amount: Number(fundAmount), rejectReason: rejectReason || 'N/A', userId: selectedRecord.userId, messageId :selectedRecord.id };
       await axios.put(`${api}/paidWithdrow/${selectedRecord.id}`, payload);
       message.success('Payment request rejected successfully');
       setIsRejectModalVisible(false);

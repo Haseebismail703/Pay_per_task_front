@@ -89,7 +89,12 @@ const WithdrawPage: React.FC = () => {
                     paymentMethod: selectedMethod,
                     paymentType: 'Withdraw',
                     amount: payoutAmount,
-                    walletAddress : selectedMethod === "payeer" ? userData.payeer : userData.perfectMoney
+                    walletAddress : selectedMethod === "payeer" ? userData.payeer : userData.perfectMoney,
+                    path : '/transaction-history',
+                     message : "Withdrow request submitted Successfully",
+                     role : "user",
+                     type : "Withdrow",
+                     
                 });
 
                 if (response.status === 200) {
