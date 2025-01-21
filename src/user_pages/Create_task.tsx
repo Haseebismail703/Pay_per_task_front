@@ -67,7 +67,7 @@ const CreateTask: React.FC = () => {
                 path: '/my-campaign',
                 message: "Task Approval pending",
                 type : "Task",
-                role : "user"
+                role : "admin"
             });
         console.log(user)
             if (response.status === 200) {
