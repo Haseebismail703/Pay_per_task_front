@@ -64,6 +64,10 @@ const CreateTask: React.FC = () => {
                 ...values,
                 totalPriceWithoutFee,
                 advertiserId: user?.user_data.id || '',
+                path: '/my-campaign',
+                message: "Task Approval pending",
+                type : "Task",
+                role : "user"
             });
         console.log(user)
             if (response.status === 200) {
