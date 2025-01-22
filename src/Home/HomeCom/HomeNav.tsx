@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
         {/* Logo */}
         <Col>
           <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
-            <Title level={3} style={{ color: '#fff', margin: 0 }}>
+            <Title className='icon' level={3} style={{ color: '#fff', margin: 0 }}>
               Pay Per Task
             </Title>
           </Link>
@@ -66,14 +66,14 @@ const Navbar: React.FC = () => {
         {/* Call to Action Button */}
         <Col>
           <Space>
-            <Button
+            {/* <Button
               type="primary"
               size="large"
               style={{ borderRadius: '30px' }}
               onClick={() => navigate('/signup')} // Navigate to the signup page
             >
               Sign Up
-            </Button>
+            </Button> */}
           </Space>
         </Col>
       </Row>

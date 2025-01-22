@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Row, Col, Button, Typography, Space } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import AOS from 'aos';
-
+import { Link } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
@@ -10,12 +10,12 @@ const HeroSection: React.FC = () => {
   useEffect(() => {
     AOS.init({
       duration: 1200,
-      once: true, // Animation happens only once
+      once: true,
     });
   }, []);
 
   return (
-    <div id='home' className="hero-section">
+    <div id="home" className="hero-section">
       <Row
         align="middle"
         justify="center"
@@ -38,6 +38,7 @@ const HeroSection: React.FC = () => {
               home. Sign up today and start completing tasks to earn real cash.
             </Text>
             <Space>
+            <Link to={'/signup'}>
               <Button
                 type="primary"
                 size="large"
@@ -46,14 +47,18 @@ const HeroSection: React.FC = () => {
               >
                 Get Started
               </Button>
+              </Link>
+              <Link to={'/login'}>
               <Button
                 type="default"
                 size="large"
                 shape="round"
                 className="cta-button secondary"
               >
-                Learn More <ArrowRightOutlined />
+                Login <ArrowRightOutlined />
               </Button>
+              </Link>
+              
             </Space>
           </Space>
         </Col>
@@ -66,7 +71,7 @@ const HeroSection: React.FC = () => {
           data-aos="fade-left"
         >
           <img
-            src="https://img.freepik.com/premium-photo/3d-man-working-computer_751108-1606.jpg" // Replace with actual image URL
+            src="https://img.freepik.com/premium-photo/3d-man-working-computer_751108-1606.jpg"
             alt="Hero Banner"
             className="hero-image"
           />

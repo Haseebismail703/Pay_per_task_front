@@ -7,23 +7,23 @@ const { Title, Text } = Typography;
 
 const steps = [
   {
-    title: 'Sign Up',
-    description: 'Create an account to get started.',
+    title: 'Register',
+    description: 'Create youre account begin your journey.',
     icon: <CheckCircleOutlined style={{ fontSize: '48px', color: '#4caf50' }} />,
   },
   {
-    title: 'Choose Tasks',
-    description: 'Browse and select tasks that suit you.',
+    title: 'Select Tasks',
+    description: 'Find and choose tasks that match your skills.',
     icon: <CheckCircleOutlined style={{ fontSize: '48px', color: '#4caf50' }} />,
   },
   {
     title: 'Complete Tasks',
-    description: 'Submit completed tasks for approval.',
+    description: 'Finish tasks and submit them for review.',
     icon: <CheckCircleOutlined style={{ fontSize: '48px', color: '#4caf50' }} />,
   },
   {
-    title: 'Earn Rewards',
-    description: 'Get paid for your hard work.',
+    title: 'Receive Rewards',
+    description: 'Earn rewards for your completed tasks.',
     icon: <CheckCircleOutlined style={{ fontSize: '48px', color: '#4caf50' }} />,
   },
 ];

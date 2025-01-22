@@ -29,7 +29,7 @@ const categories = [
     animation: 'zoom-in',
   },
   {
-    title: 'Social Media Engagement',
+    title: 'Social Media',
     icon: <TeamOutlined style={{ fontSize: '48px', color: '#f5222d' }} />,
     animation: 'fade-right',
   },

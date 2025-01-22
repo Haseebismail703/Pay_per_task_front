@@ -1,73 +1,74 @@
 .hero-section {
-  background: linear-gradient(135deg, #4a90e2, #50e3c2);
+  background: linear-gradient(135deg, #e0f7fa, #e1f5fe);
   padding: 60px 20px;
-  color: #ffffff;
+  text-align: center;
 }
 
 .hero-content {
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
 }
 
 .text-content {
-  text-align: center;
+  text-align: left;
 }
 
 .hero-title {
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 20px;
+  font-size: 2.5rem;
+  color: #003366;
 }
 
 .hero-text {
-  font-size: 18px;
-  color: #f0f0f0;
+  font-size: 1.2rem;
+  color: #555;
 }
 
 .cta-button {
-  font-size: 16px;
-  font-weight: 600;
-  padding: 10px 20px;
+  transition: all 0.3s ease;
 }
 
 .cta-button.primary {
-  background-color: #1890ff;
-  border-color: #1890ff;
-  color: #ffffff;
-  transition: transform 0.3s ease;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
 }
 
 .cta-button.primary:hover {
-  background-color: #40a9ff;
-  border-color: #40a9ff;
-  transform: translateY(-5px);
+  background-color: #0056b3;
 }
 
 .cta-button.secondary {
-  color: #1890ff;
-  border-color: #1890ff;
-  transition: transform 0.3s ease;
+  color: #007bff;
+  border-color: #007bff;
 }
 
 .cta-button.secondary:hover {
-  color: #40a9ff;
-  border-color: #40a9ff;
-  transform: translateY(-5px);
+  background-color: #e3f2fd;
 }
 
-.image-content img {
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+.image-content {
+  text-align: center;
 }
 
-.image-content img:hover {
-  transform: scale(1.05);
+.hero-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-@media (min-width: 768px) {
+/* Responsive Queries */
+@media (max-width: 768px) {
   .text-content {
-    text-align: left;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-text {
+    font-size: 1rem;
   }
 }
 
@@ -236,3 +237,5 @@
     color: #2c8ee5;
   }
   
+
+
