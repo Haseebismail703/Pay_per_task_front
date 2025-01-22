@@ -34,6 +34,7 @@ interface Noti {
     messageId: string;
     role: string;
     type: string;
+    isRead : boolean;
 }
 
 interface NotiResponse {
@@ -76,7 +77,17 @@ const Navbar: React.FC = () => {
         fetchNotifications();
         fetchUserData();
     }, []);
+    const handleReadAllNotifications = async () => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            await axios.put(`${api}/isRead/${user?.user_data.id}`);
+            fetchNotifications(); 
+        } catch (error) {
+            console.error('Error marking all notifications as read:', error);
+        }
+    };
 
+     let countNotification = notifications.filter(item=> item.isRead === false)
     const handleDrawerOpen = () => setDrawerVisible(true);
     const handleDrawerClose = () => setDrawerVisible(false);
     const handleNotificationDrawerOpen = () => setNotificationDrawerVisible(true);
@@ -89,12 +100,14 @@ const Navbar: React.FC = () => {
 
     const getTagColor = (type: string) => {
         switch (type) {
-            case 'Task Complete':
+            case 'Task':
                 return 'green';
-            case 'Deposit Successful':
+            case 'Deposit':
                 return 'blue';
-            case 'Withdrawal Rejected':
+            case 'Withdrow':
                 return 'volcano';
+                case 'reject' :
+                    return 'red'
             default:
                 return 'default';
         }
@@ -168,7 +181,7 @@ const Navbar: React.FC = () => {
                 />
                 <div style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>User Dashboard</div>
                 <Space align="center">
-                    <Badge count={notifications.length} style={{ marginTop: 29, marginRight: 6 }}>
+                    <Badge count={countNotification?.length} style={{ marginTop: 29, marginRight: 6 }}>
                         <Button
                             type="text"
                             icon={<BellOutlined style={{ color: 'white', fontSize: 23, marginTop: 50 }} />}
@@ -210,6 +223,17 @@ const Navbar: React.FC = () => {
                 open={notificationDrawerVisible}
                 width={400}
             >
+                {countNotification.length > 0 && (
+                    <>
+                                    <Button
+                                        type="primary"
+                                        onClick={handleReadAllNotifications}
+                                        style={{ marginRight: '8px' }}
+                                    >
+                                        Mark All as Read
+                                    </Button>
+                                    <br /> <br /></>
+                                )}
                 {notifications.length > 0 ? (
                     notifications.map((notification, index) => (
                         <div
@@ -219,6 +243,8 @@ const Navbar: React.FC = () => {
                                 padding: '8px',
                                 borderBottom: '1px solid #e8e8e8',
                                 cursor: 'pointer',
+                                backgroundColor: notification.isRead ? '#ffffff' : '#f0f0f0', 
+                                borderRadius : 10
                             }}
                             onClick={() => handleNotificationClick(notification.path)}
                         >

@@ -57,8 +57,8 @@ const DepositPage: React.FC = () => {
                     TID,
                     path : '/transaction-history',
                     message : `Deposite ${depositAmount}$ request send successfully`,
-                    role : 'user',
-                    type : 'Deposite'
+                    role : 'admin',
+                    type : 'Deposit'
                 };
 
                 const response = await axios.post(`${api}/addFund`, payload);

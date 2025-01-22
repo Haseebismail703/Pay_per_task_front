@@ -3,14 +3,12 @@ import {
     Layout, Menu, Dropdown, Avatar, Space, Drawer, Button, Badge, Tag,
 } from 'antd';
 import {
-    UserOutlined,
     SettingOutlined,
     LogoutOutlined,
     MenuOutlined,
     DashboardOutlined,
     FileDoneOutlined,
     AppstoreAddOutlined,
-    HistoryOutlined,
     FundOutlined,
     UsergroupAddOutlined,
     BellOutlined,
@@ -27,6 +25,7 @@ interface Noti {
     path: string;
     message: string;
     type: string;
+    isRead : boolean;
 }
 
 interface User {
@@ -50,9 +49,7 @@ const Admin_navb: React.FC = () => {
         navigate(path);
         handleNotificationDrawerClose();
     };
-
-    useEffect(() => {
-        const fetchNotifications = async () => {
+ const fetchNotifications = async () => {
             try {
                 const res = await axios.get(`${api}/getNoti`);
                 // Assuming the API returns separate arrays for user and admin notifications
@@ -72,9 +69,22 @@ const Admin_navb: React.FC = () => {
             }
         };
 
+    useEffect(() => {
         fetchNotifications();
         fetchUserProfile();
     }, []);
+
+    const handleReadAllNotifications = async () => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            await axios.put(`${api}/isRead/${user?.user_data.id}`);
+            fetchNotifications(); 
+        } catch (error) {
+            console.error('Error marking all notifications as read:', error);
+        }
+    };
+
+     let countNotification = notifications.filter(item=> item.isRead === false)
 
     const profileMenuItems = [
         {
@@ -130,9 +140,9 @@ const Admin_navb: React.FC = () => {
                     Admin Dashboard
                 </div>
                 <Space align="center">
-                    <Badge count={notifications.length} style={{ marginTop: 29, marginRight: 6 }}>
+                    <Badge count={countNotification?.length} style={{ marginTop: 29, marginRight: 6 }}>
                         <Button
-                            type="text"
+                            type="text" 
                             icon={<BellOutlined style={{ color: 'white', fontSize: 23, marginTop: 50 }} />}
                             onClick={handleNotificationDrawerOpen}
                         />
@@ -159,48 +169,73 @@ const Admin_navb: React.FC = () => {
             </Drawer>
 
             <Drawer
-                title="Notifications"
-                placement="right"
-                closable
-                onClose={handleNotificationDrawerClose}
-                open={notificationDrawerVisible}
-                width={400}
-            >
-                {notifications.length > 0 ? (
-                    notifications.map((notification, index) => (
-                        <div
-                            key={index}
-                            style={{
-                                marginBottom: '10px',
-                                padding: '8px',
-                                borderBottom: '1px solid #e8e8e8',
-                                cursor: 'pointer',
-                            }}
-                            onClick={() => handleNotificationClick(notification.path)}
-                        >
-                            <Tag color={getTagColor(notification.type)}>{notification.type}</Tag>
-                            <span style={{ marginLeft: '8px' }}>{notification.message}</span>
-                        </div>
-                    ))
-                ) : (
-                    <div>No notifications</div>
-                )}
-            </Drawer>
+    title="Notifications"
+    placement="right"
+    closable={true}
+    onClose={handleNotificationDrawerClose}
+    open={notificationDrawerVisible}
+    width={400}
+>
+    {countNotification.length > 0 && (
+        <>
+         <Button
+            type="primary"
+            onClick={handleReadAllNotifications}
+            style={{ marginRight: '8px' }}
+        >
+            Mark All as Read
+        </Button> <br /><br />
+        </>
+       
+    )}
+    {notifications.length > 0 ? (
+        notifications.map((notification, index) => {
+            const { tagColor, textColor } = getTagColor(notification.type);
+            return (
+                <div
+                    key={index}
+                    style={{
+                        marginBottom: '10px',
+                        padding: '8px',
+                        borderBottom: '1px solid #e8e8e8',
+                        cursor: 'pointer',
+                        color: textColor,
+                        backgroundColor: notification.isRead ? '#ffffff' : '#f0f0f0', // Light black for unread
+                        borderRadius : 10
+                    }}
+                    onClick={() => handleNotificationClick(notification.path)}
+                >
+                    <Tag color={tagColor}>
+                        {notification.type}
+                    </Tag>
+                    <span style={{ marginLeft: '8px' }}>{notification.message}</span>
+                </div>
+            );
+        })
+    ) : (
+        <div>No notifications</div>
+    )}
+</Drawer>
+
+
         </>
     );
 };
 
 const getTagColor = (type: string) => {
     switch (type) {
-        case 'Task Complete':
-            return 'green';
-        case 'Deposit Successful':
-            return 'blue';
-        case 'Withdrawal Rejected':
-            return 'volcano';
+        case 'Task':
+            return { tagColor: 'green', textColor: '#52c41a' }; // Green
+        case 'Deposit':
+            return { tagColor: 'blue', textColor: '#1890ff' }; // Blue
+        case 'Withdrow':
+            return { tagColor: 'volcano', textColor: '#fa541c' }; // Volcano
+        case 'Report':
+            return { tagColor: 'black', textColor: '#000000' }; // Black
         default:
-            return 'default';
+            return { tagColor: 'default', textColor: '#595959' }; // Default gray
     }
 };
+
 
 export default Admin_navb;
