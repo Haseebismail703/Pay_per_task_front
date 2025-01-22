@@ -16,6 +16,7 @@ interface TableData {
     userId: string;
     taskId: string;
     revision: boolean;
+    id : string
 }
 
 const ViewStatics: React.FC = () => {
@@ -34,6 +35,7 @@ const ViewStatics: React.FC = () => {
         try {
             const response = await axios.get(`${api}/getallproofbyId/${id}`);
             const formattedData = response.data?.getProof.map((item: any, index: number) => ({
+                id : item._id,
                 key: `${index + 1}`,
                 username: item.username,
                 country: item.country,
@@ -46,6 +48,7 @@ const ViewStatics: React.FC = () => {
             }));
             setData(formattedData);
             const revisionTaskfrom = response.data?.revision.map((item: any, index: number) => ({
+                id : item._id,
                 key: `${index + 1}`,
                 username: item.username,
                 country: item.country,
@@ -76,7 +79,8 @@ const ViewStatics: React.FC = () => {
                 taskId: record.taskId,
                 status,
                 ...(status === "reject" || status === "revision" ? { revisionComments: reason } : {}),
-                publisherReward : record.publisherReward 
+                publisherReward : record.publisherReward,
+                messageId : record.id
             });
             fetchData()
             message.success(`${status} action applied successfully.`);
