@@ -7,17 +7,21 @@ import FAQs from "./HomeCom/Faq";
 import CallToAction from "./HomeCom/CallToAction";
 import Footer from "./HomeCom/Footer";
 import Navbar from "./HomeCom/HomeNav";
+
 const HomePage: React.FC = () => {
+  let user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isEmptyUser = Object.keys(user).length === 0;
+
   return (
     <>
-    <Navbar/>
+      <Navbar />
       <HeroSection />
       <HowItWorks />
-      <Features/>
-      <TaskCategories/>
-      <FAQs/>
-      <CallToAction/>
-      <Footer/>
+      <Features />
+      <TaskCategories />
+      <FAQs />
+      {isEmptyUser && <CallToAction />}
+      <Footer />
     </>
   );
 };

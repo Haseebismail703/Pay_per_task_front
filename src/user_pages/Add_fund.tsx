@@ -55,7 +55,7 @@ const DepositPage: React.FC = () => {
                     paymentMethod: selectedMethod,
                     paymentType: 'Deposit',
                     TID,
-                    path : '/transaction-history',
+                    path : '/admin/payment_request',
                     message : `Deposite ${depositAmount}$ request send successfully`,
                     role : 'admin',
                     type : 'Deposit'

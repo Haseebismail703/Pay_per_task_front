@@ -78,8 +78,12 @@ const TaskDetailPage: React.FC = () => {
       setFileList([]);
       setProof('');
     } catch (error) {
-      message.error('Failed to upload task. Please try again.');
-      console.error('Error uploading task:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        message.error(error.response.data?.message);
+        // console.log(error.response.data?.message)
+      } else {
+        console.error('Error uploading task:', error);
+      }
     } finally {
       setLoading(false);
     }

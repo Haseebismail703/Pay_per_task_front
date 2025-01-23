@@ -31,9 +31,10 @@ const SignUpForm = () => {
         password: values.password,
         role: 'user',
       });
-      window.location.href = '/allTask';
+      localStorage.setItem('user', JSON.stringify(response.data));
       message.success('User signed up successfully');
       console.log('User signed up successfully:', response.data);
+      window.location.href = '/allTask';
     } catch (error) {
       message.error('Error during sign up');
       console.error('Error during sign up:', error);

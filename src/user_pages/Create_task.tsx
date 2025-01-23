@@ -3,7 +3,7 @@ import { Form, Input, Button, Select, Typography, notification, Collapse } from 
 import Navbar from '../usercomp/user_nav';
 import axios from 'axios';
 import api from '../api/api.js';
-
+import { useNavigate } from 'react-router-dom';
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -13,7 +13,7 @@ const CreateTask: React.FC = () => {
     const [publisherReward, setPublisherReward] = useState<number>(0);
     const [workersNeeded, setWorkersNeeded] = useState<number>(0);
     const [totalPriceWithoutFee, setTotalPriceWithoutFee] = useState<number>(0);
-
+    const navigate = useNavigate()
     const countries = [
         { value: 'usa', label: 'United States' },
         { value: 'canada', label: 'Canada' },
@@ -64,17 +64,18 @@ const CreateTask: React.FC = () => {
                 ...values,
                 totalPriceWithoutFee,
                 advertiserId: user?.user_data.id || '',
-                path: '/myCampaign',
+                path: '/admin/task/pending',
                 message: "Task Approval pending",
                 type : "Task",
                 role : "admin"
             });
-        console.log(user)
+        // console.log(user)
             if (response.status === 200) {
                 notification.success({
                     message: 'Task Created Successfully',
                     description: 'Your task has been created!',
                 });
+                navigate('/myCampaign')
                 form.resetFields();
             }
         } catch (error) {

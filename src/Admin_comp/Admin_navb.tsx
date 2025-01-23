@@ -39,7 +39,6 @@ const Admin_navb: React.FC = () => {
     const [notifications, setNotifications] = useState<Noti[]>([]);
     const [notificationDrawerVisible, setNotificationDrawerVisible] = useState(false);
     const navigate = useNavigate();
-
     const handleDrawerOpen = () => setDrawerVisible(true);
     const handleDrawerClose = () => setDrawerVisible(false);
     const handleNotificationDrawerOpen = () => setNotificationDrawerVisible(true);
@@ -50,8 +49,9 @@ const Admin_navb: React.FC = () => {
         handleNotificationDrawerClose();
     };
  const fetchNotifications = async () => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
             try {
-                const res = await axios.get(`${api}/getNoti`);
+                const res = await axios.get(`${api}/getNoti/${user?.user_data.id}`);
                 // Assuming the API returns separate arrays for user and admin notifications
                 setNotifications(res.data.admin || []);
             } catch (error) {
@@ -77,7 +77,7 @@ const Admin_navb: React.FC = () => {
     const handleReadAllNotifications = async () => {
         try {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
-            await axios.put(`${api}/isRead/${user?.user_data.id}`);
+            await axios.put(`${api}/readAlladminNoti`);
             fetchNotifications(); 
         } catch (error) {
             console.error('Error marking all notifications as read:', error);
@@ -92,11 +92,15 @@ const Admin_navb: React.FC = () => {
             label: <Link to="/admin/profile">Profile Settings</Link>,
             icon: <SettingOutlined />,
         },
-        {
-            key: 'logout',
-            label: 'Logout',
-            icon: <LogoutOutlined />,
-        },
+         {
+                    key: 'logout',
+                    label: 'Logout',
+                    icon: <LogoutOutlined />,
+                    onClick: () => {
+                        localStorage.removeItem('user');
+                         window.location.href = '/'
+                    },
+                },
     ];
 
     const drawerMenuItems = [
@@ -225,7 +229,7 @@ const Admin_navb: React.FC = () => {
 const getTagColor = (type: string) => {
     switch (type) {
         case 'Task':
-            return { tagColor: 'green', textColor: '#52c41a' }; // Green
+            return { tagColor: 'yellow', textColor: 'black' }; // Light Yellow
         case 'Deposit':
             return { tagColor: 'blue', textColor: '#1890ff' }; // Blue
         case 'Withdrow':

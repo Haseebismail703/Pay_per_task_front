@@ -1,11 +1,11 @@
 import React from 'react';
-import { Layout, Menu, Button, Row, Col, Typography, Space } from 'antd';
-import { 
-  HomeOutlined, 
-  InfoCircleOutlined, 
-  BulbOutlined, 
-  AppstoreOutlined, 
-  QuestionCircleOutlined 
+import { Layout, Menu, Row, Col, Typography } from 'antd';
+import {
+  HomeOutlined,
+  InfoCircleOutlined,
+  BulbOutlined,
+  AppstoreOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -25,13 +25,42 @@ const Navbar: React.FC = () => {
     }
   };
 
+  // Define menu items using the "items" property
+  const menuItems = [
+    {
+      key: 'home',
+      icon: <HomeOutlined />,
+      label: 'Home',
+    },
+    {
+      key: 'HowItsWork',
+      icon: <InfoCircleOutlined />,
+      label: 'How It Works',
+    },
+    {
+      key: 'keyFeatures',
+      icon: <BulbOutlined />,
+      label: 'Key Features',
+    },
+    {
+      key: 'taskCategories',
+      icon: <AppstoreOutlined />,
+      label: 'Task Categories',
+    },
+    {
+      key: 'FAQs',
+      icon: <QuestionCircleOutlined />,
+      label: 'FAQs',
+    },
+  ];
+
   return (
     <Header style={{ backgroundColor: '#001529' }}>
       <Row justify="space-between" align="middle">
         {/* Logo */}
         <Col>
           <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
-            <Title className='icon' level={3} style={{ color: '#fff', margin: 0 }}>
+            <Title className="icon" level={3} style={{ color: '#fff', margin: 0 }}>
               Pay Per Task
             </Title>
           </Link>
@@ -43,38 +72,9 @@ const Navbar: React.FC = () => {
             mode="horizontal"
             theme="dark"
             style={{ lineHeight: '64px' }}
+            items={menuItems} // Use items instead of children
             onClick={handleMenuClick} // Attach the click handler here
-          >
-            <Menu.Item key="home" icon={<HomeOutlined />} style={{ fontSize: '16px' }}>
-              Home
-            </Menu.Item>
-            <Menu.Item key="HowItsWork" icon={<InfoCircleOutlined />} style={{ fontSize: '16px' }}>
-              How It Works
-            </Menu.Item>
-            <Menu.Item key="keyFeatures" icon={<BulbOutlined />} style={{ fontSize: '16px' }}>
-              Key Features
-            </Menu.Item>
-            <Menu.Item key="taskCategories" icon={<AppstoreOutlined />} style={{ fontSize: '16px' }}>
-              Task Categories
-            </Menu.Item>
-            <Menu.Item key="FAQs" icon={<QuestionCircleOutlined />} style={{ fontSize: '16px' }}>
-              FAQs
-            </Menu.Item>
-          </Menu>
-        </Col>
-
-        {/* Call to Action Button */}
-        <Col>
-          <Space>
-            {/* <Button
-              type="primary"
-              size="large"
-              style={{ borderRadius: '30px' }}
-              onClick={() => navigate('/signup')} // Navigate to the signup page
-            >
-              Sign Up
-            </Button> */}
-          </Space>
+          />
         </Col>
       </Row>
     </Header>

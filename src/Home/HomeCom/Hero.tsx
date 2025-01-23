@@ -14,6 +14,8 @@ const HeroSection: React.FC = () => {
     });
   }, []);
 
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  const role = user?.user_data?.role;
   return (
     <div id="home" className="hero-section">
       <Row
@@ -38,6 +40,8 @@ const HeroSection: React.FC = () => {
               home. Sign up today and start completing tasks to earn real cash.
             </Text>
             <Space>
+              {user === null ?
+              <> 
             <Link to={'/signup'}>
               <Button
                 type="primary"
@@ -58,11 +62,18 @@ const HeroSection: React.FC = () => {
                 Login <ArrowRightOutlined />
               </Button>
               </Link>
-              
+              </> :  <Link to={role === 'user' ? 'allTask' : '/admin/dashboard'}>
+              <Button
+                size="large"
+                shape="round"
+              >
+                Dashboard <ArrowRightOutlined />
+              </Button>
+              </Link> }
             </Space>
           </Space>
         </Col>
-
+             
         {/* Image Content */}
         <Col
           xs={24}

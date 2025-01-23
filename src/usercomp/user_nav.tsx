@@ -49,8 +49,9 @@ const Navbar: React.FC = () => {
     const navigate = useNavigate();
 
     const fetchNotifications = async () => {
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
         try {
-            const res = await axios.get<NotiResponse>(`${api}/getNoti`);
+            const res = await axios.get<NotiResponse>(`${api}/getNoti/${userData.user_data?.id}`);
             const userNotifications = res.data.user;
     
             // Handle notifications separately or combine them if needed
@@ -123,6 +124,10 @@ const Navbar: React.FC = () => {
             key: 'logout',
             label: 'Logout',
             icon: <LogoutOutlined />,
+            onClick: () => {
+                localStorage.removeItem('user');
+                window.location.href = '/login'
+            },
         },
     ];
 
