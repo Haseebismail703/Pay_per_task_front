@@ -116,7 +116,7 @@ const TaskDisplay: React.FC = () => {
                 <Row gutter={[16, 16]}>
                     {filteredTasks.map((task) => (
                         <Col xs={24} sm={12} md={8} lg={6} key={task._id}>
-                            <Link to={`/all-tasks/${task._id}`}>
+                            <Link to={`/allTask/${task._id}`}>
                             <Card
                             hoverable
                                 title={task.taskTitle}

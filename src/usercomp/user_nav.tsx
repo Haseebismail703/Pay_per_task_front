@@ -130,12 +130,12 @@ const Navbar: React.FC = () => {
         {
             key: '1',
             icon: <CheckSquareOutlined />,
-            label: <Link to="/all-tasks">All Tasks</Link>,
+            label: <Link to="/allTask">All Tasks</Link>,
         },
         {
             key: '2',
             icon: <SolutionOutlined />,
-            label: <Link to="/my-work">My Work</Link>,
+            label: <Link to="/myWork">My Work</Link>,
         },
         {
             key: '3',
@@ -147,15 +147,15 @@ const Navbar: React.FC = () => {
             icon: <ProjectOutlined />,
             label: 'Advertising',
             children: [
-                { key: '4.1', icon: <WalletOutlined />, label: <Link to="/add-fund">Add Fund</Link> },
-                { key: '4.2', icon: <AppstoreAddOutlined />, label: <Link to="/create-campaign">Create Campaign</Link> },
-                { key: '4.3', icon: <AppstoreAddOutlined />, label: <Link to="/my-campaign">My Campaign</Link> },
+                { key: '4.1', icon: <WalletOutlined />, label: <Link to="/addFund">Add Fund</Link> },
+                { key: '4.2', icon: <AppstoreAddOutlined />, label: <Link to="/createCampaign">Create Campaign</Link> },
+                { key: '4.3', icon: <AppstoreAddOutlined />, label: <Link to="/myCampaign">My Campaign</Link> },
             ],
         },
         {
             key: '5',
             icon: <HistoryOutlined />,
-            label: <Link to="/transaction-history">Transaction History</Link>,
+            label: <Link to="/transactionHistory">Transaction History</Link>,
         },
     ];
 

@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
         // Save the user data or token in localStorage
         localStorage.setItem('user', JSON.stringify(response.data));
         // Navigate to the dashboard after successful login
-        navigate('/all-tasks');
+        window.location.href = '/allTask';
       } else {
         message.error('Invalid email or password');
       }

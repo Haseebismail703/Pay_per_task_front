@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Spin } from 'antd'
 import Alltask from './user_pages/Alltask'
-import My_task from './user_pages/My_work'
+// import My_task from './user_pages/My_work'
 import CreateTask from './user_pages/Create_task'
 import TaskSubmitPage from './user_pages/Task_detail'
 import Opera_hist from './user_pages/Opera_hist'
@@ -24,41 +25,72 @@ import ApRejRev from './user_pages/ApRejRev'
 import ReportTask from './Admin_pages/ReportTask'
 import SignUpForm from './user_pages/Signup'
 import HomePage from './Home/Home'
+import { useEffect, useState } from 'react'
+import Page from './user_pages/Page'
 function App() {
+  const [role, setRole] = useState('')
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const auth_role = JSON.parse(localStorage.getItem('user') || '{}')
+      setRole(auth_role.user_data.role);
+      setLoading(false);
+    };
+    checkAuth();
+  }, []);
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '30px 50px' }}>
+        <Spin
+          size="large"
+          indicator={
+            <div style={{ color: 'green', fontSize: '24px' }}>
+              <i className="anticon anticon-loading anticon-spin"></i>
+            </div>
+          }
+        />
+      </div>
+    );
+  }
   return (
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<HomePage/>} />
+          {/* Public route */}
+          <Route path='/' element={<HomePage />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/signup' element={<SignUpForm />} />
+          <Route path="*" element={<Page />} />
           {/* Publisher */}
-          <Route path='/all-tasks' element={<Alltask />} />
-          <Route path='/all-tasks/:taskId' element={<TaskSubmitPage />} />
-          <Route path='/my-work' element={<Opera_hist />} />
-          <Route path='/withdraw' element={<Writhdrow />} />
-          <Route path='/transaction-history' element={<Trans_hist />} />
-          <Route path='/profile' element={<Profile />} />
-          <Route path='/login' element={<LoginPage/>} />
-          <Route path='/signup' element={<SignUpForm/>} />
+          <Route path='/allTask' element={role === 'user' ? <Alltask /> : <Navigate to="/" />} />
+          <Route path='/allTask/:taskId' element={role === 'user' ? <TaskSubmitPage /> : <Navigate to="/" />} />
+          <Route path='/myWork' element={role === 'user' ? <Opera_hist /> : <Navigate to="/" />} />
+          <Route path='/withdraw' element={role === 'user' ? <Writhdrow /> : <Navigate to="/" />} />
+          <Route path='/transactionHistory' element={role === 'user' ? <Trans_hist /> : <Navigate to="/" />} />
+          <Route path='/profile' element={role === 'user' ? <Profile /> : <Navigate to="/" />} />
+          
 
           {/* advertiser */}
-          <Route path='/create-campaign' element={<CreateTask />} />
-          <Route path='/my-campaign' element={<Mycompaign />} />
-          <Route path='/my-campaign/:id' element={<ViewStatisticsPage />} />
-          <Route path='/my-campaign/:id/allApRejRevTask' element={<ApRejRev/>} />
-          <Route path='/my_task' element={<My_task />} />
-          <Route path='/add-fund' element={<Deposite />} />
-      
+          <Route path='/createCampaign' element={role === 'user' ? <CreateTask /> : <Navigate to="/" />} />
+          <Route path='/myCampaign' element={role === 'user' ? <Mycompaign /> : <Navigate to="/" />} />
+          <Route path='/myCampaign/:id' element={role === 'user' ? <ViewStatisticsPage /> : <Navigate to="/" />} />
+          <Route path='/myCampaign/:id/allApRejRevTask' element={role === 'user' ? <ApRejRev /> : <Navigate to="/" />} />
+          {/* <Route path='/my_task' element={role === 'user' ? <My_task /> : <Navigate to="/" />} /> */}
+          <Route path='/addFund' element={role === 'user' ? <Deposite /> : <Navigate to="/" />} />
+
           {/* Admin Routes */}
-          <Route path='/admin/dashboard' element={<Admin_dash />} />
-          <Route path='/admin/task/pending' element={<PendingTasks/>} />
-          <Route path='/admin/task/approved_reject' element={<Appr_rej_task/>} />
-          <Route path='/admin/All_users' element={<All_user/>} />
-          <Route path='/admin/task_report' element={<Task_report/>} />
-          <Route path='/admin/task_report/:taskId' element={<ReportTask/>} />
-          <Route path='/admin/payment_request' element={<PaymentRequestPage/>} />
-          <Route path='/admin/payment_history' element={<Payment_history/>} />
-          <Route path='/admin/profile' element={<Admin_profile/>} />
-          <Route path='/admin/login' element={<Admin_login/>} /> 
+          <Route path='/admin/dashboard' element={role === 'admin' ? <Admin_dash /> : <Navigate to="/" />} />
+          <Route path='/admin/task/pending' element={role === 'admin' ? <PendingTasks /> : <Navigate to="/" />} />
+          <Route path='/admin/task/approved_reject' element={role === 'admin' ? <Appr_rej_task /> : <Navigate to="/" />} />
+          <Route path='/admin/All_users' element={role === 'admin' ? <All_user /> : <Navigate to="/" />} />
+          <Route path='/admin/task_report' element={role === 'admin' ? <Task_report /> : <Navigate to="/" />} />
+          <Route path='/admin/task_report/:taskId' element={role === 'admin' ? <ReportTask /> : <Navigate to="/" />} />
+          <Route path='/admin/payment_request' element={role === 'admin' ? <PaymentRequestPage /> : <Navigate to="/" />} />
+          <Route path='/admin/payment_history' element={role === 'admin' ? <Payment_history /> : <Navigate to="/" />} />
+          <Route path='/admin/profile' element={role === 'admin' ? <Admin_profile /> : <Navigate to="/" />} />
+          <Route path='/admin/login' element={<Admin_login />} />
         </Routes>
       </BrowserRouter>
     </div>

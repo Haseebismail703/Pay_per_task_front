@@ -147,7 +147,7 @@ const Mycompaign: React.FC = () => {
             key: 'actions',
             render: (_: any, record: Task) => (
                 <Button>
-                    <Link to={`/my-campaign/${record._id}`}>View Proof</Link>
+                    <Link to={`/myCampaign/${record._id}`}>View Proof</Link>
                 </Button>
             ),
         },
@@ -156,7 +156,7 @@ const Mycompaign: React.FC = () => {
             key: 'actions',
             render: (_: any, record: Task) => (
                 <Button>
-                    <Link to={`/my-campaign/${record._id}/allApRejRevTask`}>
+                    <Link to={`/myCampaign/${record._id}/allApRejRevTask`}>
                         <Tooltip title="view all user App/Rej/Rev task">View All</Tooltip>
                     </Link>
                 </Button>
