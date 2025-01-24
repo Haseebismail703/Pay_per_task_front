@@ -67,7 +67,7 @@ const My_task: React.FC = () => {
         {
             title: 'Action',
             key: 'action',
-            render: (text: string, record: Task) => (
+            render: (record: Task) => (
                 <div>
                     <Button type="primary" onClick={() => handleActionClick('Accept', record)}>
                         Accept

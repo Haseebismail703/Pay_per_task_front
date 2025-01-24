@@ -151,7 +151,7 @@ const OperationHistory: React.FC = () => {
         {
             title: 'Action',
             key: 'action',
-            render: (text: string, record: Operation) => (
+            render: (record: Operation) => (
                 <Button type="primary">
                     <Link to={`/allTask/${record.taskId}`}>Complete Again</Link>
                 </Button>
@@ -179,7 +179,7 @@ const OperationHistory: React.FC = () => {
         {
             title: 'Action',
             key: 'action',
-            render: (text: string, record: Operation) => (
+            render: (record: Operation) => (
                 <Button type="link" onClick={() => { setIsModalVisible(true); setCurrentTaskId(record.taskId); }}>
                     Report
                 </Button>

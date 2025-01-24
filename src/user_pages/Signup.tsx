@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Form, Input, Button, Col, Row, Card, message } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import api from '../api/api';
 
@@ -13,7 +13,7 @@ const images = [
 
 const SignUpForm = () => {
   const [currentImage, setCurrentImage] = useState(0);
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     const interval = setInterval(() => {

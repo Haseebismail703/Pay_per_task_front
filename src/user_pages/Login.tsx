@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Typography, Row, Col, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate
+import { Link } from 'react-router-dom'; // Added useNavigate
 import axios from 'axios';
 import api from '../api/api'; // Import your API URL
 
@@ -9,7 +9,6 @@ const { Title, Text } = Typography;
 
 const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false); // to handle button loading state
-  const navigate = useNavigate(); // Hook to navigate after successful login
 
   const onFinish = async (values: any) => {
     setLoading(true); // Set loading to true when submitting

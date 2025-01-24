@@ -9,7 +9,6 @@ import {
   Button,
   Form,
   Spin,
-  Space,
   message,
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
@@ -74,7 +73,7 @@ const TaskDetailPage: React.FC = () => {
       const response = await axios.post(`${api}/submitTask`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      message.success('Task submitted successfully!');
+      message.success(response.data?.message);
       setFileList([]);
       setProof('');
     } catch (error) {
