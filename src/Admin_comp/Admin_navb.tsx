@@ -76,7 +76,7 @@ const Admin_navb: React.FC = () => {
 
     const handleReadAllNotifications = async () => {
         try {
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            // const user = JSON.parse(localStorage.getItem('user') || '{}');
             await axios.put(`${api}/readAlladminNoti`);
             fetchNotifications(); 
         } catch (error) {
