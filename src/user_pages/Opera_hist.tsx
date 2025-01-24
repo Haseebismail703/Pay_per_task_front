@@ -3,6 +3,7 @@ import { Table, Button, Typography, Card, Modal, Form, Input, Spin,message } fro
 import Navbar from '../usercomp/user_nav';
 import axios from 'axios';
 import api from '../api/api';
+import { Link } from 'react-router-dom';
 
 const { Title } = Typography;
 
@@ -57,6 +58,7 @@ const OperationHistory: React.FC = () => {
                 const revisionData = revision.map((item: any, index: number) => ({
                     key: `${index + 1}`,
                     publisherReward: item.publisherReward,
+                    taskId : item.taskId,
                     created_at: item.created_at?.substring(0, 10),
                     imgurl: item.imgurl?.map((imgObj: any) => imgObj.image_url) || [],
                     revision: item.revision,
@@ -64,6 +66,7 @@ const OperationHistory: React.FC = () => {
                 }));
                 const pendingData = pending.map((item: any, index: number) => ({
                     key: `${index + 1}`,
+                    taskId : item.taskId,
                     publisherReward: item.publisherReward,
                     created_at: item.created_at?.substring(0, 10),
                     imgurl: item.imgurl?.map((imgObj: any) => imgObj.image_url) || [],
@@ -109,10 +112,6 @@ const OperationHistory: React.FC = () => {
         setReportText('');
     };
 
-    const handleCompleteAgain = (taskId: string) => {
-        console.log('Completing task again:', taskId);
-    };
-
     const columnsPending = [
         {
             title: 'Task Title',
@@ -153,8 +152,8 @@ const OperationHistory: React.FC = () => {
             title: 'Action',
             key: 'action',
             render: (text: string, record: Operation) => (
-                <Button type="primary" onClick={() => handleCompleteAgain(record.id)}>
-                    Complete Again
+                <Button type="primary">
+                    <Link to={`/allTask/${record.taskId}`}>Complete Again</Link>
                 </Button>
             ),
         },
