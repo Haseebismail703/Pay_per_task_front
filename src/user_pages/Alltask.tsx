@@ -40,8 +40,9 @@ const TaskDisplay: React.FC = () => {
     // Fetch tasks data from API
     useEffect(() => {
         const fetchTasks = async () => {
+            let user = JSON.parse(localStorage.getItem('user') || '{}')
             try {
-                const response = await axios.get<Task[]>(`${api}/getTaskuser`);
+                const response = await axios.get<Task[]>(`${api}/getTaskuser/${user.user_data?.id}`);
                 const tasksWithProgress = response.data.map(task => ({
                     ...task,
                 }));

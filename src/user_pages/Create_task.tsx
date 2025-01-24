@@ -213,7 +213,7 @@ const CreateTask: React.FC = () => {
                         </Select>
                     </Form.Item>
                     <Form.Item
-                        label="Instructions"
+                        label="Task proof instruction"
                         name="instructions"
                         rules={[{ required: true, message: 'Please provide instructions!' }]}
                     >
