@@ -55,7 +55,7 @@ const Navbar: React.FC = () => {
             const userNotifications = res.data.user;
     
             // Handle notifications separately or combine them if needed
-            setNotifications([...userNotifications]); // Example: Combine both arrays
+            setNotifications([...userNotifications]); 
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }
